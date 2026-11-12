@@ -1,0 +1,15 @@
+```mermaid
+graph TD
+    User["Developer (You)"] --> UI["Client-Side React UI (Visual Mission Control)"]
+    User --> Chat["Antigravity / VS Code Chat (@aegis)"]
+    
+    subgraph AegisSterling["Aegis Sterling Core"]
+        UI -->|Inspects State & Triggers Waves| CoreLoop["Orchestrator Engine (Ouroboros / Fast-Five)"]
+        Chat -->|Direct Prompts & Directives| CoreLoop
+        CoreLoop --> Frontend["Frontend Squad (@Una)"]
+        CoreLoop --> Server["Server Squad (@Mira)"]
+        CoreLoop --> Mobile["Mobile Squad (@Iris)"]
+    end
+    
+    CoreLoop -.->|Updates Telemetry & Logs| UI
+```
