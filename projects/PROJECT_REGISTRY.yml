@@ -1,0 +1,43 @@
+# 🛡️ Aegis Sterling — Project Registry
+# This file registers all active projects managed by Aegis Sterling.
+
+projects:
+  - id: white-caves
+    name: "White Caves Real Estate LLC"
+    description: "Dubai's premier luxury property CRM and transaction platform"
+    status: active
+    phase: "Wave 56 — Production Hardening"
+    repos:
+      frontend:
+        name: White-Caves-Frontend
+        github: https://github.com/arslan9024/White-Caves-Frontend
+        team_lead: "@Una"
+        team_agents: ["@Una", "@Rachel_QA", "@Victoria", "@Rania"]
+        rules: projects/white-caves-frontend/squads/rules/
+        skills: projects/white-caves-frontend/squads/skills/
+      server:
+        name: White-Caves-Server
+        github: https://github.com/arslan9024/White-Caves-Server
+        team_lead: "@Mira"
+        team_agents: ["@Mira", "@Barbara", "@Ruchi", "@Sofia", "@Gwynne"]
+        rules: projects/white-caves-server/squads/rules/
+        skills: projects/white-caves-server/squads/skills/
+      mobile:
+        name: White-Caves-Mobile
+        github: ""
+        team_lead: "@Iris"
+        team_agents: ["@Iris", "@Invoice", "@Rachel_QA"]
+        rules: projects/white-caves-mobile/squads/rules/
+        skills: projects/white-caves-mobile/squads/skills/
+    orchestration_lead: "@Ada"
+    business_lead: "@Zoe"
+    plans: projects/white-caves-frontend/knowledge/plans/
+
+# Future Projects (Template)
+# - id: <project-name>
+#   name: ""
+#   description: ""
+#   status: planned
+#   repos:
+#     frontend: ...
+#     server: ...
