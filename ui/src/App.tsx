@@ -12,6 +12,8 @@ import {
   Globe,
   CheckCircle2,
   Clock,
+  BookOpen,
+  ExternalLink,
 } from 'lucide-react';
 
 interface SquadCardProps {
@@ -64,7 +66,7 @@ const squads: SquadCardProps[] = [
 ];
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'mesh' | 'repos'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'mesh' | 'repos' | 'book'>('overview');
 
   return (
     <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col">
@@ -115,6 +117,17 @@ export function App() {
           >
             Multi-Repo Matrix
           </button>
+          <button
+            onClick={() => setActiveTab('book')}
+            className={`px-3.5 py-1.5 rounded-md font-medium transition-all flex items-center gap-1.5 ${
+              activeTab === 'book'
+                ? 'bg-purple-600/30 text-purple-300 border border-purple-500/30'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 text-rose-400" />
+            Book of White Caves
+          </button>
         </div>
 
         {/* Right Status Indicators */}
@@ -129,8 +142,41 @@ export function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
-        {/* Top Hero KPI Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {activeTab === 'book' ? (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between bg-slate-900/90 border border-slate-800 rounded-xl px-5 py-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                  <BookOpen className="w-5 h-5 text-rose-400" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold text-white">The Book of White Caves (Living Encyclopedia)</h2>
+                  <p className="text-xs text-slate-400">Chapters 1–8 · Multi-repo software architecture &amp; dual-track RBAC gates</p>
+                </div>
+              </div>
+              <a
+                href="/book-white-caves/index.html"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-300 font-medium bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20"
+              >
+                <span>Open Standalone</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+
+            <div className="border border-slate-800 rounded-xl overflow-hidden bg-[#09090b] shadow-2xl h-[780px]">
+              <iframe
+                src="/book-white-caves/index.html"
+                title="The Book of White Caves"
+                className="w-full h-full border-0"
+              />
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Top Hero KPI Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="border-sky-900/40">
             <div className="flex items-center justify-between text-slate-400 text-xs">
               <span>ACTIVE CLIENT PROJECT</span>
@@ -257,6 +303,8 @@ export function App() {
             </div>
           </div>
         </Card>
+          </>
+        )}
       </main>
 
       {/* Footer */}
