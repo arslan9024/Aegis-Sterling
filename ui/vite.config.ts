@@ -7,6 +7,10 @@ export default defineConfig({
   server: {
     port: 3333,
     open: false,
+    watch: {
+      usePolling: true,
+      interval: 300,
+    },
   },
   resolve: {
     alias: {
@@ -14,4 +18,3 @@ export default defineConfig({
     },
   },
 });
-

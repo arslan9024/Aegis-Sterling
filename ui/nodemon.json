@@ -1,0 +1,11 @@
+{
+  "watch": [
+    "src",
+    "public",
+    "vite.config.ts",
+    "../knowledge/book-white-caves"
+  ],
+  "ext": "ts,tsx,html,css,json",
+  "exec": "vite",
+  "delay": "500"
+}
