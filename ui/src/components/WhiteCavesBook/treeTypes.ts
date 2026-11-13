@@ -82,6 +82,9 @@ export interface TopicNode {
   title: string;
   summary: string;
   artifacts: LeafArtifactNode[];
+  paragraphs?: ParagraphNode[];
+  sentences?: SentenceNode[];
+  lines?: LineNode[];
 }
 
 /** Level 7: Section */
@@ -115,6 +118,8 @@ export interface ChapterNode {
   readTimeMinutes: number;
   subChapters: SubChapterNode[];
 }
+
+export type Chapter = ChapterNode;
 
 /** Level 4: Canto / Division */
 export interface CantoNode {

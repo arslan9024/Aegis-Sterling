@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Badge } from './components/ui/card';
 import { MultiLevelBookView } from './components/WhiteCavesBook/MultiLevelBookView';
 import { MultiLevelBookProvider } from './components/WhiteCavesBook/MultiLevelBookContext';
 import { ProtocolReferenceModal } from './components/ProtocolReferenceModal';
 import { ProtocolRef } from './components/ProtocolRef';
+import { SpotlightSearch } from './components/SpotlightSearch';
 import { PROTOCOL_REGISTRY, ProtocolReference } from './data/protocolRegistry';
 import { useTheme } from './context/ThemeContext';
 import {
@@ -23,6 +24,7 @@ import {
   ChevronDown,
   Terminal,
   Compass,
+  Search,
   FolderKanban,
   Sparkles,
 } from 'lucide-react';
@@ -96,7 +98,20 @@ export function App() {
   const [libraryMenuOpen, setLibraryMenuOpen] = useState<boolean>(true);
   const [selectedProtocol, setSelectedProtocol] = useState<ProtocolReference | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+  const [spotlightOpen, setSpotlightOpen] = useState<boolean>(false);
   const { theme, resolvedTheme, toggleTheme } = useTheme();
+
+  // U-04: Global Ctrl+K spotlight
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSpotlightOpen(o => !o);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   const handleOpenProtocol = (code: string) => {
     if (PROTOCOL_REGISTRY[code]) {
@@ -148,6 +163,22 @@ export function App() {
 
         {/* Top Controls: Theme, Ports & System Health */}
         <div className="flex items-center gap-3 text-xs">
+          {/* U-04: Ctrl+K Spotlight Search Trigger */}
+          <button
+            onClick={() => setSpotlightOpen(true)}
+            className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+              resolvedTheme === 'dark'
+                ? 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-600'
+                : 'bg-slate-100 border-slate-300 text-slate-500 hover:text-slate-800 hover:bg-slate-200'
+            }`}
+            title="Global Omni-Search (Ctrl+K)"
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span>Search...</span>
+            <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded border ml-1 ${
+              resolvedTheme === 'dark' ? 'border-slate-600 text-slate-500' : 'border-slate-300 text-slate-400'
+            }`}>Ctrl+K</span>
+          </button>
           {/* Theme Toggle (Light Default Invariant) */}
           <button
             onClick={toggleTheme}
@@ -375,6 +406,131 @@ export function App() {
                 ))}
               </div>
             </section>
+          ) : activeTab === 'mesh' ? (
+            /* ── U-07: Visual 235-Node Workforce Mesh ── */
+            <section className="space-y-6 max-w-6xl mx-auto">
+              <div>
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <Cpu className="w-5 h-5 text-purple-500" />
+                  Autonomous Workforce Mesh — 235 Sovereign Nodes
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  Dual-track 1·12·108 engineering + 1·12·120 business architecture under <ProtocolRef code="TURING-SEPARATION-010" onOpenProtocol={handleOpenProtocol} />.
+                </p>
+              </div>
+
+              {/* Executive Council */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-purple-600 dark:text-purple-400 font-bold">Executive Council · 7 Sovereign Officers</span>
+                  <div className="flex-1 h-px bg-purple-200 dark:bg-purple-900" />
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+                  {([
+                    { name: '@Ada', role: 'Chief Architect' },
+                    { name: '@Aurora', role: 'Systems CTO' },
+                    { name: '@Grace', role: 'Lead Engineer' },
+                    { name: '@Zoe', role: 'COO · Biz Lead' },
+                    { name: '@Elena', role: 'Research CRO' },
+                    { name: '@Margaret', role: 'Strategy' },
+                    { name: '@Nova', role: 'Crucible Cmd' },
+                  ] as const).map(exec => (
+                    <div key={exec.name} className="p-2.5 rounded-xl border text-center transition-all hover:scale-105 cursor-default bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800/60">
+                      <div className="w-8 h-8 rounded-full mx-auto mb-1.5 flex items-center justify-center text-xs font-bold bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">
+                        {exec.name[1]}
+                      </div>
+                      <div className="text-[11px] font-bold text-slate-800 dark:text-slate-100">{exec.name}</div>
+                      <div className="text-[9px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">{exec.role}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 12 Engineering Depts */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-sky-600 dark:text-sky-400 font-bold">Track 1 · Engineering · 12 Depts × 9 Nodes = 108</span>
+                  <div className="flex-1 h-px bg-sky-200 dark:bg-sky-900" />
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
+                  {([
+                    { dept: '01', name: 'Orchestration', lead: '@Ada', nodes: 9 },
+                    { dept: '02', name: 'UI/UX', lead: '@Una', nodes: 9 },
+                    { dept: '03', name: 'Mobile', lead: '@Iris', nodes: 9 },
+                    { dept: '04', name: 'Backend', lead: '@Mira', nodes: 9 },
+                    { dept: '05', name: 'Prisma Data', lead: '@Barbara', nodes: 9 },
+                    { dept: '06', name: 'API Gateway', lead: '@Ruchi', nodes: 9 },
+                    { dept: '07', name: 'SecOps', lead: '@Sofia', nodes: 9 },
+                    { dept: '08', name: 'DevOps/SRE', lead: '@Gwynne', nodes: 9 },
+                    { dept: '09', name: 'Design/PDF', lead: '@Victoria', nodes: 9 },
+                    { dept: '10', name: 'i18n/RTL', lead: '@Invoice', nodes: 9 },
+                    { dept: '11', name: 'Vision/OCR', lead: '@Rania', nodes: 9 },
+                    { dept: '12', name: 'SQA/E2E', lead: '@Rachel_QA', nodes: 9 },
+                  ] as const).map(dept => (
+                    <div key={dept.dept} className="p-3 rounded-xl border bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-sky-400 dark:hover:border-sky-700 transition-all">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-mono text-[10px] font-bold text-sky-600 dark:text-sky-400">D{dept.dept}</span>
+                        <span className="text-[10px] text-slate-400">{dept.nodes} nodes</span>
+                      </div>
+                      <div className="text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight">{dept.name}</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 font-mono">{dept.lead}</div>
+                      <div className="mt-2 flex gap-0.5 flex-wrap">
+                        {Array.from({ length: dept.nodes }).map((_, i) => (
+                          <span key={i} className="w-2 h-2 rounded-sm bg-sky-200 dark:bg-sky-800/80" />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 12 Business Depts */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-bold">Track 2 · Business · 12 Depts × 10 Nodes = 120</span>
+                  <div className="flex-1 h-px bg-emerald-200 dark:bg-emerald-900" />
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
+                  {([
+                    { dept: 'B01', name: 'Luxury Sales', nodes: 10 },
+                    { dept: 'B02', name: 'Strategic Offplan', nodes: 10 },
+                    { dept: 'B03', name: 'Commercial Invest', nodes: 10 },
+                    { dept: 'B04', name: 'Residential Leasing', nodes: 10 },
+                    { dept: 'B05', name: 'Asset & Facilities', nodes: 10 },
+                    { dept: 'B06', name: 'Revenue & Finance', nodes: 10 },
+                    { dept: 'B07', name: 'Performance Mktg', nodes: 10 },
+                    { dept: 'B08', name: 'Client Experience', nodes: 10 },
+                    { dept: 'B09', name: 'Corp Governance', nodes: 10 },
+                    { dept: 'B10', name: 'RERA Compliance', nodes: 10 },
+                    { dept: 'B11', name: 'Conveyancing', nodes: 10 },
+                    { dept: 'B12', name: 'Market Intelligence', nodes: 10 },
+                  ] as const).map(dept => (
+                    <div key={dept.dept} className="p-3 rounded-xl border bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-700 transition-all">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400">{dept.dept}</span>
+                        <span className="text-[10px] text-slate-400">{dept.nodes} nodes</span>
+                      </div>
+                      <div className="text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight">{dept.name}</div>
+                      <div className="mt-2 flex gap-0.5 flex-wrap">
+                        {Array.from({ length: dept.nodes }).map((_, i) => (
+                          <span key={i} className="w-2 h-2 rounded-sm bg-emerald-200 dark:bg-emerald-800/80" />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 rounded-xl border bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30 border-purple-200 dark:border-purple-800/60">
+                <div className="text-sm font-bold text-slate-800 dark:text-slate-100">Total Autonomous Mesh Capacity</div>
+                <div className="flex items-center gap-4 text-xs font-mono">
+                  <span className="text-purple-600 dark:text-purple-400 font-bold">7 Exec</span>
+                  <span className="text-sky-600 dark:text-sky-400 font-bold">108 Eng</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">120 Biz</span>
+                  <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">= 235 Nodes</span>
+                </div>
+              </div>
+            </section>
           ) : activeTab === 'repos' ? (
             /* ── Multi-Repo Matrix & Ports ── */
             <section className="space-y-4 max-w-6xl mx-auto">
@@ -517,6 +673,17 @@ export function App() {
         onClose={() => setSelectedProtocol(null)}
         onSelectProtocol={handleOpenProtocol}
         onNavigateToChapter={handleNavigateToChapter}
+      />
+
+      {/* U-04: Global Ctrl+K Omni-Search Spotlight */}
+      <SpotlightSearch
+        open={spotlightOpen}
+        onClose={() => setSpotlightOpen(false)}
+        onOpenProtocol={handleOpenProtocol}
+        onOpenLibrary={(bookId) => {
+          setActiveTab('library');
+          if (bookId) setActiveBookId(bookId as 'book-01-white-caves' | 'book-02-aegis-sterling');
+        }}
       />
 
       {/* Footer */}

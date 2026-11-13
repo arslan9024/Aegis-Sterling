@@ -14,6 +14,12 @@ import {
   CHAPTER_AEGIS_TURING_CREDIT,
   CHAPTER_AEGIS_SELF_LEARNING,
 } from './chapterAegisPhilosophy';
+import { CHAPTER_AEGIS_DEVOPS, CHAPTER_AEGIS_TYPESCRIPT } from './chapterAegisDevOps';
+import {
+  CHAPTER_AEGIS_UAE_DOMAIN,
+  CHAPTER_AEGIS_SECOPS,
+  CHAPTER_AEGIS_REFLECTIONS,
+} from './chapterAegisUAEDomain';
 
 export const AEGIS_12_LEVEL_CORPUS: MasterCorpusRoot = {
   level: 0,
@@ -308,6 +314,39 @@ export const AEGIS_12_LEVEL_CORPUS: MasterCorpusRoot = {
                   title: 'Canto 1: Recursive Knowledge Anchoring',
                   description: 'Crystallizing human dialogue into eternal TypeScript schemas.',
                   chapters: [CHAPTER_AEGIS_SELF_LEARNING],
+                },
+              ],
+            },
+            {
+              level: 3,
+              nodeId: 'VL03-AS-005',
+              volumeNumber: 5,
+              title: 'Volume V: Engineering Laws, Sovereignty & Reflections',
+              description: 'DevOps CI/CD, TypeScript strictness, UAE statutory domain, SecOps, and session growth chronicles.',
+              cantos: [
+                {
+                  level: 4,
+                  nodeId: 'CN04-AS-005',
+                  cantoNumber: 1,
+                  title: 'Canto 1: Engineering Sovereignty Laws',
+                  description: 'Git governance, TypeScript strict mode, and the 350-line covenant.',
+                  chapters: [CHAPTER_AEGIS_DEVOPS, CHAPTER_AEGIS_TYPESCRIPT],
+                },
+                {
+                  level: 4,
+                  nodeId: 'CN04-AS-006',
+                  cantoNumber: 2,
+                  title: 'Canto 2: Statutory Domain & Security',
+                  description: 'UAE FTA 5% VAT, Ejari, DLD idempotency, SecOps, and RBAC architecture.',
+                  chapters: [CHAPTER_AEGIS_UAE_DOMAIN, CHAPTER_AEGIS_SECOPS],
+                },
+                {
+                  level: 4,
+                  nodeId: 'CN04-AS-007',
+                  cantoNumber: 3,
+                  title: 'Canto 3: Growth Index & Session Reflections',
+                  description: 'The Arslan-Aegis creative loop, autonomous growth metrics, and permanent wisdom anchors.',
+                  chapters: [CHAPTER_AEGIS_REFLECTIONS],
                 },
               ],
             },

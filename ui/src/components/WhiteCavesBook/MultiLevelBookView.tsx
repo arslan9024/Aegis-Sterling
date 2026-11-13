@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useMultiLevelBook } from './MultiLevelBookContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
@@ -63,6 +63,17 @@ export const MultiLevelBookView: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [bookmarkedNodes, setBookmarkedNodes] = useState<string[]>([currentChapter.nodeId]);
+
+  // U-01: Reading progress bar
+  const [readProgress, setReadProgress] = useState(0);
+  const contentScrollRef = useRef<HTMLDivElement>(null);
+  const handleContentScroll = useCallback(() => {
+    const el = contentScrollRef.current;
+    if (!el) return;
+    const scrolled = el.scrollTop;
+    const total = el.scrollHeight - el.clientHeight;
+    setReadProgress(total > 0 ? Math.round((scrolled / total) * 100) : 0);
+  }, []);
 
   const toggleBookmark = (nodeId: string) => {
     setBookmarkedNodes(prev =>
@@ -288,6 +299,18 @@ export const MultiLevelBookView: React.FC = () => {
             {isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           </button>
         </div>
+      </div>
+
+      {/* ── U-01: Chapter Reading Progress Bar ── */}
+      <div
+        className={`h-1 w-full transition-colors ${
+          isDark ? 'bg-slate-800' : 'bg-slate-200'
+        }`}
+      >
+        <div
+          className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-200"
+          style={{ width: `${readProgress}%` }}
+        />
       </div>
 
       {/* ── Level 3 & 4: Volume & Canto Horizontal Selection Strip ── */}
@@ -560,7 +583,10 @@ export const MultiLevelBookView: React.FC = () => {
           </div>
 
           {/* Deep Level Presentation Body (Scaled via zoomLevel) */}
-          <div className="flex-1 overflow-y-auto p-8 space-y-6 max-w-4xl mx-auto w-full">
+          <div className="flex-1 overflow-y-auto p-8 space-y-6 max-w-4xl mx-auto w-full"
+            ref={contentScrollRef}
+            onScroll={handleContentScroll}
+          >
             <div
               style={{
                 transform: `scale(${zoomLevel / 100})`,
@@ -822,6 +848,77 @@ export const MultiLevelBookView: React.FC = () => {
               )}
             </div>
           </div>
+
+          {/* U-02: Prev / Next Chapter Navigator */}
+          {(() => {
+            const chapters = currentCanto.chapters;
+            const idx = chapters.findIndex(c => c.nodeId === currentChapter.nodeId);
+            const prevCh = idx > 0 ? chapters[idx - 1] : null;
+            const nextCh = idx < chapters.length - 1 ? chapters[idx + 1] : null;
+            if (!prevCh && !nextCh) return null;
+            return (
+              <div
+                className={`flex items-center justify-between gap-4 px-6 py-4 border-t text-sm transition-colors ${
+                  isDark ? 'border-slate-800 bg-[#070b14]' : 'border-slate-200 bg-white shadow-xs'
+                }`}
+              >
+                {prevCh ? (
+                  <button
+                    onClick={() => { selectChapter(prevCh.nodeId); setReadProgress(0); }}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border font-medium transition-all max-w-[45%] ${
+                      isDark
+                        ? 'border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white'
+                        : 'border-slate-200 bg-slate-50 hover:bg-white text-slate-700 hover:text-slate-900 shadow-xs'
+                    }`}
+                  >
+                    <ArrowUpLeft className="w-4 h-4 flex-shrink-0 text-purple-500" />
+                    <div className="text-left min-w-0">
+                      <div className="text-[10px] text-slate-400 uppercase tracking-wider">Previous</div>
+                      <div className="text-xs font-semibold truncate">{prevCh.title.split(': ')[1] || prevCh.title}</div>
+                    </div>
+                  </button>
+                ) : (
+                  <span />
+                )}
+
+                <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                  <span className="text-[10px] font-mono text-slate-400">
+                    {idx + 1} / {chapters.length}
+                  </span>
+                  <div className="flex gap-1">
+                    {chapters.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => { selectChapter(chapters[i].nodeId); setReadProgress(0); }}
+                        className={`w-1.5 h-1.5 rounded-full transition-all ${
+                          i === idx ? 'bg-purple-500 w-4' : isDark ? 'bg-slate-700 hover:bg-slate-500' : 'bg-slate-300 hover:bg-slate-500'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {nextCh ? (
+                  <button
+                    onClick={() => { selectChapter(nextCh.nodeId); setReadProgress(0); }}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border font-medium transition-all max-w-[45%] ${
+                      isDark
+                        ? 'border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white'
+                        : 'border-slate-200 bg-slate-50 hover:bg-white text-slate-700 hover:text-slate-900 shadow-xs'
+                    }`}
+                  >
+                    <div className="text-right min-w-0">
+                      <div className="text-[10px] text-slate-400 uppercase tracking-wider">Next</div>
+                      <div className="text-xs font-semibold truncate">{nextCh.title.split(': ')[1] || nextCh.title}</div>
+                    </div>
+                    <CornerDownRight className="w-4 h-4 flex-shrink-0 text-purple-500" />
+                  </button>
+                ) : (
+                  <span />
+                )}
+              </div>
+            );
+          })()}
         </main>
       </div>
     </div>
