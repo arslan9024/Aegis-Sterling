@@ -4,6 +4,7 @@
   "private": true,
   "description": "Master Sovereign AI Orchestration Mesh, Living Chronicler & Corporate Hub",
   "scripts": {
+    "ports:check": "npx tsx ../secrets/ports.ts --check aegis",
     "dev": "npm --prefix ui run dev",
     "dev:watch": "npm --prefix ui run dev:watch",
     "build": "npm --prefix ui run build",
