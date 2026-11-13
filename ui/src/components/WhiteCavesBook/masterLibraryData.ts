@@ -9,6 +9,11 @@ import { CHAPTER_PHASE_HISTORY } from './chapterPhaseHistory';
 import { CHAPTER_WAVE_SPRINTS } from './chapterWaveSprints';
 import { CHAPTER_SESSION_TRANSCRIPTS } from './chapterSessionTranscripts';
 import { CHAPTER_AEGIS_GENESIS, CHAPTER_AEGIS_SWARM } from './chapterAegisGenesis';
+import {
+  CHAPTER_AEGIS_OUROBOROS,
+  CHAPTER_AEGIS_TURING_CREDIT,
+  CHAPTER_AEGIS_SELF_LEARNING,
+} from './chapterAegisPhilosophy';
 
 export const AEGIS_12_LEVEL_CORPUS: MasterCorpusRoot = {
   level: 0,
@@ -269,6 +274,40 @@ export const AEGIS_12_LEVEL_CORPUS: MasterCorpusRoot = {
                   title: 'Canto 1: Mesh Symphony',
                   description: 'Council dispatching, parallel tool execution, and token shields.',
                   chapters: [CHAPTER_AEGIS_SWARM],
+                },
+              ],
+            },
+            {
+              level: 3,
+              nodeId: 'VL03-AS-003',
+              volumeNumber: 3,
+              title: 'Volume III: The Autopilot Engine & Turing Laws',
+              description: 'Perpetual Ouroboros, zero-waste economics, and sub-second execution.',
+              cantos: [
+                {
+                  level: 4,
+                  nodeId: 'CN04-AS-003',
+                  cantoNumber: 1,
+                  title: 'Canto 1: Continuous Self-Evolution',
+                  description: 'The six-phase loop and credit velocity invariants.',
+                  chapters: [CHAPTER_AEGIS_OUROBOROS, CHAPTER_AEGIS_TURING_CREDIT],
+                },
+              ],
+            },
+            {
+              level: 3,
+              nodeId: 'VL03-AS-004',
+              volumeNumber: 4,
+              title: 'Volume IV: The Self-Learning Memory Mesh',
+              description: 'Rule crystallization, permanent memory anchors, and epistemological growth.',
+              cantos: [
+                {
+                  level: 4,
+                  nodeId: 'CN04-AS-004',
+                  cantoNumber: 1,
+                  title: 'Canto 1: Recursive Knowledge Anchoring',
+                  description: 'Crystallizing human dialogue into eternal TypeScript schemas.',
+                  chapters: [CHAPTER_AEGIS_SELF_LEARNING],
                 },
               ],
             },

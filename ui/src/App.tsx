@@ -21,9 +21,11 @@ import {
   Laptop,
   Activity,
   ChevronRight,
+  ChevronDown,
   Terminal,
   Compass,
   FolderKanban,
+  Sparkles,
 } from 'lucide-react';
 
 interface SquadCardProps {
@@ -91,6 +93,8 @@ const squads: SquadCardProps[] = [
 
 export function App() {
   const [activeTab, setActiveTab] = useState<'library' | 'reader' | 'protocols' | 'mesh' | 'repos' | 'overview'>('library');
+  const [activeBookId, setActiveBookId] = useState<'book-01-white-caves' | 'book-02-aegis-sterling'>('book-01-white-caves');
+  const [libraryMenuOpen, setLibraryMenuOpen] = useState<boolean>(true);
   const [selectedProtocol, setSelectedProtocol] = useState<ProtocolReference | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const { theme, resolvedTheme, toggleTheme } = useTheme();
@@ -103,6 +107,11 @@ export function App() {
 
   const handleNavigateToChapter = (_slug: string) => {
     setActiveTab('reader');
+  };
+
+  const handleSelectBookFromSidebar = (bookId: 'book-01-white-caves' | 'book-02-aegis-sterling') => {
+    setActiveBookId(bookId);
+    setActiveTab('library');
   };
 
   return (
@@ -188,17 +197,65 @@ export function App() {
 
           {/* Navigation Links */}
           <nav className="p-2 space-y-1 flex-1">
-            <button
-              onClick={() => setActiveTab('library')}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                activeTab === 'library'
-                  ? 'bg-purple-600 text-white shadow-md shadow-purple-600/25'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
-              }`}
-            >
-              <BookOpen className="w-4 h-4 flex-shrink-0 text-amber-400" />
-              {!sidebarCollapsed && <span>Aegis Library (2 Books)</span>}
-            </button>
+            {/* Master Library Accordion Group */}
+            <div className="space-y-1">
+              <button
+                onClick={() => {
+                  setActiveTab('library');
+                  if (!sidebarCollapsed) setLibraryMenuOpen(!libraryMenuOpen);
+                }}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  activeTab === 'library'
+                    ? 'bg-purple-600 text-white shadow-md shadow-purple-600/25'
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <BookOpen className="w-4 h-4 flex-shrink-0 text-amber-400" />
+                  {!sidebarCollapsed && <span>Aegis Library</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      libraryMenuOpen ? 'transform rotate-180' : ''
+                    }`}
+                  />
+                )}
+              </button>
+
+              {/* Sub-Items: Book 1 & Book 2 */}
+              {!sidebarCollapsed && libraryMenuOpen && (
+                <div className="pl-4 pr-1 py-1 space-y-1 border-l-2 border-purple-500/30 ml-4 animate-in fade-in duration-150">
+                  <button
+                    onClick={() => handleSelectBookFromSidebar('book-01-white-caves')}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all flex items-center justify-between ${
+                      activeTab === 'library' && activeBookId === 'book-01-white-caves'
+                        ? 'bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold border border-purple-300 dark:border-purple-800'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                    }`}
+                  >
+                    <span className="truncate">Book 1: White Caves</span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded font-mono bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400">
+                      Project
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => handleSelectBookFromSidebar('book-02-aegis-sterling')}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all flex items-center justify-between ${
+                      activeTab === 'library' && activeBookId === 'book-02-aegis-sterling'
+                        ? 'bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-bold border border-purple-300 dark:border-purple-800'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+                    }`}
+                  >
+                    <span className="truncate">Book 2: Aegis Sterling</span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded font-mono bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
+                      <Sparkles className="w-2.5 h-2.5" /> Auto
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
 
             <button
               onClick={() => setActiveTab('reader')}
@@ -286,7 +343,7 @@ export function App() {
         <main className="flex-1 overflow-y-auto p-6 space-y-6">
           {activeTab === 'library' ? (
             <div className="h-[calc(100vh-130px)] w-full">
-              <MultiLevelBookProvider>
+              <MultiLevelBookProvider initialBookId={activeBookId}>
                 <MultiLevelBookView />
               </MultiLevelBookProvider>
             </div>

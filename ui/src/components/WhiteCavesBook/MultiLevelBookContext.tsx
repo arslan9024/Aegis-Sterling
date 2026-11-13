@@ -55,12 +55,22 @@ interface MultiLevelBookContextType {
 
 const MultiLevelBookContext = createContext<MultiLevelBookContextType | null>(null);
 
-export const MultiLevelBookProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const MultiLevelBookProvider: React.FC<{ children: ReactNode; initialBookId?: string }> = ({
+  children,
+  initialBookId = 'book-01-white-caves',
+}) => {
   const [corpus] = useState<MasterCorpusRoot>(AEGIS_12_LEVEL_CORPUS);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Selected level keys
-  const [bookId, setBookId] = useState<string>('book-01-white-caves');
+  const [bookId, setBookId] = useState<string>(initialBookId);
+
+  // Sync initialBookId if parent changes
+  React.useEffect(() => {
+    if (initialBookId) {
+      setBookId(initialBookId);
+    }
+  }, [initialBookId]);
   const [volId, setVolId] = useState<string>('VL03-001');
   const [cantoId, setCantoId] = useState<string>('CN04-001');
   const [chapterId, setChapterId] = useState<string>('CH05-001');
