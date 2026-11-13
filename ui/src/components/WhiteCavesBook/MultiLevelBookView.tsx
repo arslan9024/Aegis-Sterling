@@ -1,6 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useMultiLevelBook } from './MultiLevelBookContext';
 import { useTheme } from '../../context/ThemeContext';
+import { ProtocolRef } from '../ProtocolRef';
+import { ProtocolReferenceModal } from '../ProtocolReferenceModal';
+import { PROTOCOL_REGISTRY, ProtocolReference } from '../../data/protocolRegistry';
 import {
   BookOpen,
   ChevronRight,
@@ -63,6 +66,32 @@ export const MultiLevelBookView: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [bookmarkedNodes, setBookmarkedNodes] = useState<string[]>([currentChapter.nodeId]);
+  const [activeModalProtocol, setActiveModalProtocol] = useState<ProtocolReference | null>(null);
+
+  const handleOpenProtocolModal = (code: string) => {
+    if (PROTOCOL_REGISTRY[code]) {
+      setActiveModalProtocol(PROTOCOL_REGISTRY[code]);
+    }
+  };
+
+  // U-03: Render text with auto ProtocolRef portals
+  const renderTextWithProtocols = (text: string) => {
+    if (!text) return null;
+    const protocolRegex = /(TURING-[A-Z0-9-]+|AEG-\d{3})/g;
+    const parts = text.split(protocolRegex);
+    return parts.map((part, i) => {
+      if (PROTOCOL_REGISTRY[part]) {
+        return (
+          <ProtocolRef
+            key={i}
+            code={part}
+            onOpenProtocol={handleOpenProtocolModal}
+          />
+        );
+      }
+      return <React.Fragment key={i}>{part}</React.Fragment>;
+    });
+  };
 
   // U-01: Reading progress bar
   const [readProgress, setReadProgress] = useState(0);
@@ -659,7 +688,7 @@ export const MultiLevelBookView: React.FC = () => {
                             {p.header}
                           </h3>
                           <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
-                            {p.narrative}
+                            {renderTextWithProtocols(p.narrative)}
                           </p>
 
                           {/* Math formulas if present */}
@@ -722,7 +751,7 @@ export const MultiLevelBookView: React.FC = () => {
                                     )}
                                   </div>
                                   <p className="text-xs text-slate-800 dark:text-slate-200 font-medium">
-                                    {sent.statement}
+                                    {renderTextWithProtocols(sent.statement)}
                                   </p>
 
                                   {/* Level 12: Code Lines */}
@@ -810,7 +839,7 @@ export const MultiLevelBookView: React.FC = () => {
                           </span>
                         </div>
                         <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                          {subCh.summary}
+                          {renderTextWithProtocols(subCh.summary)}
                         </p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pt-2">
@@ -921,6 +950,22 @@ export const MultiLevelBookView: React.FC = () => {
           })()}
         </main>
       </div>
+
+      {/* Protocol Inspector Modal triggered by inline text badge */}
+      {activeModalProtocol && (
+        <ProtocolReferenceModal
+          protocol={activeModalProtocol}
+          onClose={() => setActiveModalProtocol(null)}
+          onSelectProtocol={(code) => {
+            if (PROTOCOL_REGISTRY[code]) {
+              setActiveModalProtocol(PROTOCOL_REGISTRY[code]);
+            }
+          }}
+          onNavigateToChapter={() => {
+            setActiveModalProtocol(null);
+          }}
+        />
+      )}
     </div>
   );
 };

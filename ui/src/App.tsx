@@ -5,6 +5,9 @@ import { MultiLevelBookProvider } from './components/WhiteCavesBook/MultiLevelBo
 import { ProtocolReferenceModal } from './components/ProtocolReferenceModal';
 import { ProtocolRef } from './components/ProtocolRef';
 import { SpotlightSearch } from './components/SpotlightSearch';
+import { AgentThoughtStreamer } from './components/AgentThoughtStreamer';
+import { OuroborosWaveTrigger } from './components/OuroborosWaveTrigger';
+import { MultiRepoLiveMonitor } from './components/MultiRepoLiveMonitor';
 import { PROTOCOL_REGISTRY, ProtocolReference } from './data/protocolRegistry';
 import { useTheme } from './context/ThemeContext';
 import {
@@ -575,6 +578,14 @@ export function App() {
           ) : (
             /* ── Overview Mission Control ── */
             <div className="max-w-7xl mx-auto space-y-6">
+              {/* Ouroboros Autopilot & Real-time Streamer Controls */}
+              <OuroborosWaveTrigger />
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <AgentThoughtStreamer />
+                <MultiRepoLiveMonitor />
+              </div>
+
               {/* Top Hero KPI Metrics */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card className="border-sky-500/20">
