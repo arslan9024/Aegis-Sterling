@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Card, Badge } from './components/ui/card';
 import { BookKnowledgeViewer } from './components/BookKnowledgeViewer';
+import { MultiLevelBookView } from './components/WhiteCavesBook/MultiLevelBookView';
+import { MultiLevelBookProvider } from './components/WhiteCavesBook/MultiLevelBookContext';
 import { ProtocolReferenceModal } from './components/ProtocolReferenceModal';
 import { ProtocolRef } from './components/ProtocolRef';
 import { PROTOCOL_REGISTRY, ProtocolReference } from './data/protocolRegistry';
@@ -88,7 +90,7 @@ const squads: SquadCardProps[] = [
 ];
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'mesh' | 'protocols' | 'repos' | 'book'>('overview');
+  const [activeTab, setActiveTab] = useState<'library' | 'reader' | 'protocols' | 'mesh' | 'repos' | 'overview'>('library');
   const [selectedProtocol, setSelectedProtocol] = useState<ProtocolReference | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
   const { theme, resolvedTheme, toggleTheme } = useTheme();
@@ -100,7 +102,7 @@ export function App() {
   };
 
   const handleNavigateToChapter = (_slug: string) => {
-    setActiveTab('book');
+    setActiveTab('reader');
   };
 
   return (
@@ -187,6 +189,30 @@ export function App() {
           {/* Navigation Links */}
           <nav className="p-2 space-y-1 flex-1">
             <button
+              onClick={() => setActiveTab('library')}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'library'
+                  ? 'bg-purple-600 text-white shadow-md shadow-purple-600/25'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+              }`}
+            >
+              <BookOpen className="w-4 h-4 flex-shrink-0 text-amber-400" />
+              {!sidebarCollapsed && <span>Aegis Library (2 Books)</span>}
+            </button>
+
+            <button
+              onClick={() => setActiveTab('reader')}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'reader'
+                  ? 'bg-purple-600 text-white shadow-md shadow-purple-600/25'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
+              }`}
+            >
+              <Compass className="w-4 h-4 flex-shrink-0 text-rose-500" />
+              {!sidebarCollapsed && <span>Executive Reader</span>}
+            </button>
+
+            <button
               onClick={() => setActiveTab('overview')}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'overview'
@@ -196,18 +222,6 @@ export function App() {
             >
               <Activity className="w-4 h-4 flex-shrink-0" />
               {!sidebarCollapsed && <span>Mission Control</span>}
-            </button>
-
-            <button
-              onClick={() => setActiveTab('book')}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                activeTab === 'book'
-                  ? 'bg-purple-600 text-white shadow-md shadow-purple-600/25'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
-              }`}
-            >
-              <BookOpen className="w-4 h-4 flex-shrink-0 text-rose-500" />
-              {!sidebarCollapsed && <span>The Living Book</span>}
             </button>
 
             <button
@@ -270,7 +284,13 @@ export function App() {
 
         {/* Center Main Viewport */}
         <main className="flex-1 overflow-y-auto p-6 space-y-6">
-          {activeTab === 'book' ? (
+          {activeTab === 'library' ? (
+            <div className="h-[calc(100vh-130px)] w-full">
+              <MultiLevelBookProvider>
+                <MultiLevelBookView />
+              </MultiLevelBookProvider>
+            </div>
+          ) : activeTab === 'reader' ? (
             <BookKnowledgeViewer />
           ) : activeTab === 'protocols' ? (
             /* ── Protocol Canon & Reference Matrix ── */

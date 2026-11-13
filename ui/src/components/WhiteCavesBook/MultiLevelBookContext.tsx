@@ -38,6 +38,7 @@ interface MultiLevelBookContextType {
   setSearchQuery: (q: string) => void;
 
   // Level selector actions
+  selectBook: (bookId: string) => void;
   selectVolume: (volId: string) => void;
   selectCanto: (cantoId: string) => void;
   selectChapter: (chapterId: string) => void;
@@ -59,6 +60,7 @@ export const MultiLevelBookProvider: React.FC<{ children: ReactNode }> = ({ chil
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Selected level keys
+  const [bookId, setBookId] = useState<string>('book-01-white-caves');
   const [volId, setVolId] = useState<string>('VL03-001');
   const [cantoId, setCantoId] = useState<string>('CN04-001');
   const [chapterId, setChapterId] = useState<string>('CH05-001');
@@ -72,7 +74,9 @@ export const MultiLevelBookProvider: React.FC<{ children: ReactNode }> = ({ chil
 
   // Derivations
   const currentLibrary = corpus.libraries[0];
-  const currentBook = currentLibrary.books[0];
+  const currentBook = useMemo(() => {
+    return currentLibrary.books.find(b => b.bookId === bookId) || currentLibrary.books[0];
+  }, [currentLibrary, bookId]);
 
   const currentVolume = useMemo(() => {
     return currentBook.volumes.find(v => v.nodeId === volId) || currentBook.volumes[0];
@@ -244,6 +248,23 @@ export const MultiLevelBookProvider: React.FC<{ children: ReactNode }> = ({ chil
     currentLine,
   ]);
 
+  const selectBook = (id: string) => {
+    setBookId(id);
+    const targetBook = currentLibrary.books.find(b => b.bookId === id);
+    if (targetBook && targetBook.volumes.length > 0) {
+      const firstVol = targetBook.volumes[0];
+      setVolId(firstVol.nodeId);
+      if (firstVol.cantos.length > 0) {
+        const firstCanto = firstVol.cantos[0];
+        setCantoId(firstCanto.nodeId);
+        if (firstCanto.chapters.length > 0) {
+          setChapterId(firstCanto.chapters[0].nodeId);
+        }
+      }
+    }
+    resetToChapter();
+  };
+
   const selectVolume = (id: string) => {
     setVolId(id);
     const target = currentBook.volumes.find(v => v.nodeId === id);
@@ -367,6 +388,7 @@ export const MultiLevelBookProvider: React.FC<{ children: ReactNode }> = ({ chil
         breadcrumbs,
         searchQuery,
         setSearchQuery,
+        selectBook,
         selectVolume,
         selectCanto,
         selectChapter,
