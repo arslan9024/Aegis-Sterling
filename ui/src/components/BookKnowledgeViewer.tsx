@@ -11,15 +11,25 @@ import {
   ExternalLink,
   Sparkles,
   RefreshCw,
+  Bookmark,
+  Share2,
+  Check,
+  Type,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 
 export const BookKnowledgeViewer: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
-  const [selectedSlug, setSelectedSlug] = useState<string>('chapter-01-architecture');
+  const [selectedSlug, setSelectedSlug] = useState<string>('chapter-10-frontend-server-connection');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [zoomLevel, setZoomLevel] = useState<number>(100);
+  const [fontStyle, setFontStyle] = useState<'sans' | 'serif' | 'mono'>('sans');
   const [iframeKey, setIframeKey] = useState<number>(0);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [copiedLink, setCopiedLink] = useState<boolean>(false);
+  const [bookmarkedChapters, setBookmarkedChapters] = useState<string[]>(['chapter-10-frontend-server-connection']);
 
   const categories = useMemo(() => {
     const cats = new Set(BOOK_CHAPTERS.map(c => c.category));
@@ -58,8 +68,28 @@ export const BookKnowledgeViewer: React.FC = () => {
     }
   };
 
+  const toggleBookmark = (slug: string) => {
+    setBookmarkedChapters(prev =>
+      prev.includes(slug) ? prev.filter(s => s !== slug) : [...prev, slug]
+    );
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard?.writeText(window.location.origin + currentChapter.file);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
+
+  const fontClasses = {
+    sans: 'font-sans',
+    serif: 'font-serif',
+    mono: 'font-mono',
+  }[fontStyle];
+
   return (
-    <div className={`flex flex-col h-[calc(100vh-140px)] w-full rounded-2xl overflow-hidden border transition-colors duration-300 shadow-2xl ${
+    <div className={`flex flex-col w-full rounded-2xl overflow-hidden border transition-all duration-300 shadow-2xl ${
+      isFullscreen ? 'fixed inset-0 z-50 rounded-none h-screen' : 'h-[calc(100vh-140px)]'
+    } ${
       theme === 'dark'
         ? 'bg-[#090d16] border-slate-800 text-slate-100'
         : 'bg-[#f8fafc] border-slate-200 text-slate-800'
@@ -89,8 +119,48 @@ export const BookKnowledgeViewer: React.FC = () => {
           </span>
         </div>
 
-        {/* Global Book Controls: Light/Dark, Zoom, Standalone, Refresh */}
+        {/* Global Book Controls: Light/Dark, Font, Zoom, Fullscreen, Standalone */}
         <div className="flex items-center gap-2">
+          {/* Typography selector */}
+          <div className={`hidden md:flex items-center text-xs rounded-lg border px-1.5 py-1 gap-1 ${
+            theme === 'dark' ? 'bg-slate-800/80 border-slate-700' : 'bg-slate-100 border-slate-300'
+          }`}>
+            <Type className="w-3.5 h-3.5 text-slate-400 ml-0.5" />
+            <button
+              onClick={() => setFontStyle('sans')}
+              className={`px-1.5 py-0.5 rounded text-[11px] font-sans ${fontStyle === 'sans' ? 'bg-purple-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+            >
+              Sans
+            </button>
+            <button
+              onClick={() => setFontStyle('serif')}
+              className={`px-1.5 py-0.5 rounded text-[11px] font-serif ${fontStyle === 'serif' ? 'bg-purple-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+            >
+              Serif
+            </button>
+            <button
+              onClick={() => setFontStyle('mono')}
+              className={`px-1.5 py-0.5 rounded text-[11px] font-mono ${fontStyle === 'mono' ? 'bg-purple-600 text-white font-semibold' : 'text-slate-400 hover:text-slate-200'}`}
+            >
+              Mono
+            </button>
+          </div>
+
+          {/* Bookmark Button */}
+          <button
+            onClick={() => toggleBookmark(currentChapter.slug)}
+            className={`p-2 rounded-lg border transition-all ${
+              bookmarkedChapters.includes(currentChapter.slug)
+                ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
+                : theme === 'dark'
+                ? 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-slate-200 hover:bg-slate-700'
+                : 'bg-slate-100 border-slate-300 text-slate-500 hover:text-slate-900 hover:bg-slate-200'
+            }`}
+            title={bookmarkedChapters.includes(currentChapter.slug) ? 'Bookmarked' : 'Add Bookmark'}
+          >
+            <Bookmark className="w-4 h-4 fill-current" />
+          </button>
+
           {/* Light/Dark Toggle */}
           <button
             onClick={toggleTheme}
@@ -138,6 +208,34 @@ export const BookKnowledgeViewer: React.FC = () => {
             </button>
           </div>
 
+          {/* Share/Copy Link */}
+          <button
+            onClick={handleCopyLink}
+            className={`p-2 rounded-lg border transition-all ${
+              copiedLink
+                ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                : theme === 'dark'
+                ? 'bg-slate-800/80 border-slate-700 text-slate-400 hover:text-slate-200'
+                : 'bg-slate-100 border-slate-300 text-slate-600 hover:text-slate-900'
+            }`}
+            title="Copy Chapter Link"
+          >
+            {copiedLink ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+          </button>
+
+          {/* Fullscreen Toggle */}
+          <button
+            onClick={() => setIsFullscreen(f => !f)}
+            className={`p-2 rounded-lg border transition-all ${
+              theme === 'dark'
+                ? 'bg-slate-800/80 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700'
+                : 'bg-slate-100 border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+            }`}
+            title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen Zen Mode'}
+          >
+            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          </button>
+
           {/* Standalone Link */}
           <a
             href={currentChapter.file}
@@ -153,7 +251,7 @@ export const BookKnowledgeViewer: React.FC = () => {
       </div>
 
       {/* ── Main Book Viewport: Sidebar Explorer & Reading Canvas ── */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className={`flex-1 flex overflow-hidden ${fontClasses}`}>
         {/* Left Interactive Chapter Explorer */}
         <aside className={`w-80 flex-shrink-0 border-r flex flex-col transition-colors duration-300 ${
           theme === 'dark' ? 'bg-[#0b101d] border-slate-800' : 'bg-white border-slate-200'
@@ -197,11 +295,12 @@ export const BookKnowledgeViewer: React.FC = () => {
           <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
             {filteredChapters.map((chap) => {
               const isSelected = chap.slug === currentChapter.slug;
+              const isBookmarked = bookmarkedChapters.includes(chap.slug);
               return (
                 <button
                   key={chap.id}
                   onClick={() => setSelectedSlug(chap.slug)}
-                  className={`w-full text-left p-3 rounded-xl border transition-all flex flex-col gap-1.5 ${
+                  className={`w-full text-left p-3 rounded-xl border transition-all flex flex-col gap-1.5 relative ${
                     isSelected
                       ? theme === 'dark'
                         ? 'bg-purple-950/40 border-purple-500/50 text-white shadow-md shadow-purple-950/50'
@@ -212,7 +311,10 @@ export const BookKnowledgeViewer: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="font-semibold text-rose-500">{chap.id.toUpperCase()}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-rose-500">{chap.id.toUpperCase()}</span>
+                      {isBookmarked && <Bookmark className="w-3 h-3 text-amber-400 fill-current" />}
+                    </div>
                     <span className="text-slate-400 font-mono text-[10px]">{chap.readTime}</span>
                   </div>
                   <h3 className="font-semibold text-xs leading-snug">{chap.title}</h3>

@@ -111,6 +111,17 @@ export const BOOK_CHAPTERS: BookChapter[] = [
     topics: ['TURING-BOOK-011', 'ADR Registry', 'Living Chronicler', 'Conversational History']
   },
   {
+    id: 'ch-10',
+    slug: 'chapter-10-frontend-server-connection',
+    title: 'Chapter 10: Frontend ↔ Server Live Connection',
+    subtitle: 'Zero-CORS Multi-Process Bridge, Vite Proxy & Sovereign Auth',
+    category: 'Multi-Repo Decoupling',
+    file: '/book-white-caves/chapter-10-frontend-server-connection.html',
+    readTime: '7 min read',
+    summary: 'Decoupled multi-process architecture connecting White-Caves-Frontend and White-Caves-Server via Vite proxy, MongoDB Atlas, and Socket.IO.',
+    topics: ['Frontend ↔ Server', 'Vite Reverse Proxy', 'Zero-CORS', 'Process Independence', 'DEV_AUTH_BYPASS']
+  },
+  {
     id: 'ch-progress',
     slug: 'progress-intelligence',
     title: 'Appendix: Progress Intelligence & Target Mesh',
@@ -124,6 +135,14 @@ export const BOOK_CHAPTERS: BookChapter[] = [
 ];
 
 export const TOPIC_GLOSSARY: Record<string, { targetSlug: string; definition: string }> = {
+  'Frontend ↔ Server': {
+    targetSlug: 'chapter-10-frontend-server-connection',
+    definition: 'Sovereign decoupled communication between Frontend (:3000) and Server (:5001) over Vite proxy and WebSockets.'
+  },
+  'Vite Reverse Proxy': {
+    targetSlug: 'chapter-10-frontend-server-connection',
+    definition: 'Development proxy in Vite intercepting /api and /socket.io to avoid browser CORS preflights entirely.'
+  },
   'TURING-LAW-000': {
     targetSlug: 'chapter-01-architecture',
     definition: 'Supreme law enforcing zero-waste AI credit spending, parallel tool batching, and sub-second execution velocity.'

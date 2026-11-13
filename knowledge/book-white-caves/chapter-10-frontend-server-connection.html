@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 10: Frontend ↔ Server Live Connection | The Book of White Caves</title>
+  <style>
+    :root {
+      --bg: #030712;
+      --card-bg: #0F172A;
+      --border: rgba(56, 189, 248, 0.2);
+      --accent-red: #EF4444;
+      --accent-cyan: #38BDF8;
+      --accent-emerald: #10B981;
+      --accent-purple: #A855F7;
+      --accent-amber: #F59E0B;
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .nav-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .nav-header a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-top: 0;
+      color: #FFF;
+      border-bottom: 2px solid var(--accent-emerald);
+      padding-bottom: 0.5rem;
+    }
+    h2 {
+      color: var(--accent-cyan);
+      margin-top: 2rem;
+      border-left: 3px solid var(--accent-purple);
+      padding-left: 0.75rem;
+    }
+    .decision-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent-cyan);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .diagram-box {
+      background: #020617;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 8px;
+      padding: 1.25rem;
+      font-family: monospace;
+      color: #38BDF8;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.4;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background: rgba(30, 41, 59, 0.8);
+      color: var(--accent-cyan);
+    }
+    tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.5);
+    }
+    code {
+      font-family: monospace;
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent-cyan);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+    pre {
+      background: #020617;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+    }
+    .alert-box {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--accent-amber);
+      padding: 1rem;
+      border-radius: 6px;
+      margin: 1.5rem 0;
+    }
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="nav-header">
+    <div><strong>The Book of White Caves</strong> &bull; Volume I</div>
+    <div>
+      <a href="/book-white-caves/index.html">&larr; Back to Index</a> | 
+      <a href="/book-white-caves/chapter-09-conversations-and-decisions.html">&larr; Chapter 09</a>
+    </div>
+  </div>
+
+  <div class="badge">Sovereign Architecture Verified &bull; Complete</div>
+  <h1>Chapter 10: Frontend &harr; Server Live Connection</h1>
+  <p style="color: var(--text-muted); font-size: 1.1rem; margin-top: -0.5rem;">
+    Zero-CORS Multi-Process Bridge, Vite Reverse Proxy & Full Sovereign Process Independence
+  </p>
+
+  <div class="decision-card">
+    <strong style="color: var(--accent-emerald);">Aegis Statutory Mandate:</strong> 
+    <code>TURING-SEPARATION-010</code> | <code>TURING-LAW-000</code> | <code>AEG-001</code><br>
+    <strong>Date Verified:</strong> 2026-11-13 &bull; <strong>Lead Systems Architect:</strong> @Mira (Backend Core) & @Una (UI Primitives)
+  </div>
+
+  <h2>1. Architectural Overview</h2>
+  <p>
+    This chapter documents the milestone wherein <code>White-Caves-Frontend</code> and <code>White-Caves-Server</code> operate as completely decoupled, sovereign, separately-run Node.js processes. Communication is cleanly routed over HTTP (<code>/api</code>) and WebSockets (<code>/socket.io</code>) through Vite's high-speed dev reverse proxy, eradicating CORS bottlenecks and eliminating mock fallbacks in favor of live data.
+  </p>
+
+  <div class="diagram-box">
+┌──────────────────────────────────────────────┐
+│   Browser (localhost:3000)                   │
+│   White-Caves-Frontend (Vite / React)        │
+│                                              │
+│   VITE_API_URL=/api                          │
+│   apiClient → /api/v1/...                    │
+│   socketService → /socket.io                 │
+└──────────────────────┬───────────────────────┘
+                       │  Vite Dev Proxy
+                       │  /api        → http://127.0.0.1:5001
+                       │  /socket.io  → ws://127.0.0.1:5001
+                       ▼
+┌──────────────────────────────────────────────┐
+│   White-Caves-Server                         │
+│   http://localhost:5001                      │
+│   AEGIS-V4-Supercharged-300%                │
+│   v2.0.26 | NODE_ENV=development             │
+│                                              │
+│   DEV_AUTH_BYPASS=true                       │
+│   → Lion Superuser Auto-Assignment           │
+│                                              │
+│   MongoDB Atlas Connected                    │
+│   Prisma v6.19.3 ORM Synchronized            │
+│   Socket.IO Gateway Online                   │
+│   5 Autonomous AI Assistants Registered      │
+│   8 Real-Time Cron Engines Active            │
+└──────────────────────────────────────────────┘
+  </div>
+
+  <h2>2. Vault Configuration & Environment Separation</h2>
+  <p>
+    All sensitive credentials are maintained in the git-ignored <code>secrets/</code> root vault. Neither the frontend nor backend checks credentials into source control.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Target Environment</th>
+        <th>Key Variables Injected</th>
+        <th>Sovereign Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>White-Caves-Server/.env</code></td>
+        <td><code>PORT=5001</code>, <code>DATABASE_URL</code>, <code>MONGODB_URI</code>, <code>JWT_SECRET</code>, <code>DEV_AUTH_BYPASS</code></td>
+        <td>Direct database connection, REST API routing, and Socket.IO initialization.</td>
+      </tr>
+      <tr>
+        <td><code>White-Caves-Frontend/.env.local</code></td>
+        <td><code>VITE_API_URL=/api</code>, <code>VITE_FIREBASE_PROJECT_ID</code>, <code>VITE_STRIPE_PUBLIC_KEY</code></td>
+        <td>Client-side proxy target, ensuring browser requests resolve without cross-origin blocks.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert-box">
+    <strong>Why Relative Path <code>VITE_API_URL=/api</code>?</strong><br>
+    By utilizing relative paths, the browser issues requests directly to <code>localhost:3000/api/...</code>. Vite's internal development proxy intercepts and forwards payloads to <code>http://127.0.0.1:5001</code> server-side, eliminating browser-level preflight CORS complications.
+  </div>
+
+  <h2>3. Live Smoke Test Validation</h2>
+  <p>
+    Automated health probes confirmed 100% operational readiness across all decoupled layers:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Verification Endpoint / System</th>
+        <th>Result</th>
+        <th>Diagnostic Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>GET http://localhost:5001/api/v1/health</code></td>
+        <td><strong style="color: var(--accent-emerald);">STATUS: 200 OK</strong></td>
+        <td><code>AEGIS-V4-Supercharged-300%</code>, v2.0.26 verified.</td>
+      </tr>
+      <tr>
+        <td><code>GET http://localhost:5001/api/v1/properties</code></td>
+        <td><strong style="color: var(--accent-emerald);">STATUS: 200 OK</strong></td>
+        <td>8 live property models hydrated directly from MongoDB Atlas.</td>
+      </tr>
+      <tr>
+        <td>Mongoose & Prisma Connection</td>
+        <td><strong style="color: var(--accent-emerald);">CONNECTED</strong></td>
+        <td>Prisma ORM schema health check passed.</td>
+      </tr>
+      <tr>
+        <td>AI Assistants (Linda, Nadia, Nina, Mary, Henry)</td>
+        <td><strong style="color: var(--accent-emerald);">5 / 5 REGISTERED</strong></td>
+        <td>Department AI handlers successfully bound to socket pipeline.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. Development Execution Protocol</h2>
+  <p>
+    Under <code>TURING-DEV-SERVER-BAN</code>, developer servers are operated exclusively in external native terminals (PowerShell):
+  </p>
+
+  <pre><code># Terminal 1 — Backend Core (Port 5001)
+cd White-Caves-Server
+npm run dev
+
+# Terminal 2 — Frontend CRM (Port 3000)
+cd White-Caves-Frontend
+npm run dev</code></pre>
+
+  <div class="footer">
+    The Book of White Caves &bull; Chronicled autonomously by Aegis Sterling Core &bull; Policy 2026.11.06-aegis-v5
+  </div>
+
+</body>
+</html>
