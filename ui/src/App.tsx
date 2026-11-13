@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Card, Badge } from './components/ui/card';
-import { BookKnowledgeViewer } from './components/BookKnowledgeViewer';
 import { MultiLevelBookView } from './components/WhiteCavesBook/MultiLevelBookView';
 import { MultiLevelBookProvider } from './components/WhiteCavesBook/MultiLevelBookContext';
 import { ProtocolReferenceModal } from './components/ProtocolReferenceModal';
@@ -92,7 +91,7 @@ const squads: SquadCardProps[] = [
 ];
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'library' | 'reader' | 'protocols' | 'mesh' | 'repos' | 'overview'>('library');
+  const [activeTab, setActiveTab] = useState<'library' | 'protocols' | 'mesh' | 'repos' | 'overview'>('library');
   const [activeBookId, setActiveBookId] = useState<'book-01-white-caves' | 'book-02-aegis-sterling'>('book-01-white-caves');
   const [libraryMenuOpen, setLibraryMenuOpen] = useState<boolean>(true);
   const [selectedProtocol, setSelectedProtocol] = useState<ProtocolReference | null>(null);
@@ -106,7 +105,7 @@ export function App() {
   };
 
   const handleNavigateToChapter = (_slug: string) => {
-    setActiveTab('reader');
+    setActiveTab('library');
   };
 
   const handleSelectBookFromSidebar = (bookId: 'book-01-white-caves' | 'book-02-aegis-sterling') => {
@@ -258,18 +257,6 @@ export function App() {
             </div>
 
             <button
-              onClick={() => setActiveTab('reader')}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                activeTab === 'reader'
-                  ? 'bg-purple-600 text-white shadow-md shadow-purple-600/25'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
-              }`}
-            >
-              <Compass className="w-4 h-4 flex-shrink-0 text-rose-500" />
-              {!sidebarCollapsed && <span>Executive Reader</span>}
-            </button>
-
-            <button
               onClick={() => setActiveTab('overview')}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'overview'
@@ -347,8 +334,6 @@ export function App() {
                 <MultiLevelBookView />
               </MultiLevelBookProvider>
             </div>
-          ) : activeTab === 'reader' ? (
-            <BookKnowledgeViewer />
           ) : activeTab === 'protocols' ? (
             /* ── Protocol Canon & Reference Matrix ── */
             <section className="space-y-4 max-w-6xl mx-auto">
