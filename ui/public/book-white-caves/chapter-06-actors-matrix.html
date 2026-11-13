@@ -124,7 +124,22 @@
     tr:nth-child(even) {
       background: rgba(255, 255, 255, 0.02);
     }
-  </style>
+  
+    .book-hyperlink {
+      color: #38bdf8;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transition: color 0.2s, background 0.2s;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+    .book-hyperlink:hover {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+    
+</style>
 </head>
 <body>
   <header>
@@ -144,9 +159,9 @@
     <div class="callout">
       <strong>Statutory Invariant (TURING-SEPARATION-010):</strong><br>
       Clean decoupling of Actors, Actions, and Structure across all systems:<br>
-      • <strong>Where they belong (DMS):</strong> 12 Fixed Corporate Departments (Floors 1–13).<br>
-      • <strong>Who &amp; What exists (ERMS):</strong> Pure Entities separated into Actors (Users, Clients, Developers, Banks) and Objects (Properties, Units, Accounts, Permits). Zero verbs or task steps live here.<br>
-      • <strong>What they do (TMS):</strong> Actions and tasks (Verbs: <code>VERIFY_KYC</code>, <code>GENERATE_EJARI</code>, <code>COLLECT_RENT</code>). Every task connects an Actor within a Department.
+      • <strong>Where they belong (<a href="chapter-06-actors-matrix.html" class="book-hyperlink" title="Explore: DMS">DMS</a>):</strong> 12 Fixed Corporate Departments (Floors 1–13).<br>
+      • <strong>Who &amp; What exists (<a href="chapter-06-actors-matrix.html" class="book-hyperlink" title="Explore: ERMS">ERMS</a>):</strong> Pure Entities separated into Actors (Users, Clients, Developers, Banks) and Objects (Properties, Units, Accounts, Permits). Zero verbs or task steps live here.<br>
+      • <strong>What they do (<a href="chapter-06-actors-matrix.html" class="book-hyperlink" title="Explore: TMS">TMS</a>):</strong> Actions and tasks (Verbs: <code>VERIFY_KYC</code>, <code>GENERATE_EJARI</code>, <code>COLLECT_RENT</code>). Every task connects an Actor within a Department.
     </div>
 
     <h2>1. The 18 Canonical Platform Actors</h2>
