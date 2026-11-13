@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Badge } from './components/ui/card';
-import { BookKnowledgeViewer } from './components/BookKnowledgeViewer';
+import { MultiLevelBookProvider } from './components/WhiteCavesBook/MultiLevelBookContext';
+import { MultiLevelBookView } from './components/WhiteCavesBook/MultiLevelBookView';
 import { useTheme } from './context/ThemeContext';
 import {
   Shield,
@@ -171,7 +172,11 @@ export function App() {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
         {activeTab === 'book' ? (
-          <BookKnowledgeViewer />
+          <div className="h-[calc(100vh-140px)]">
+            <MultiLevelBookProvider>
+              <MultiLevelBookView />
+            </MultiLevelBookProvider>
+          </div>
         ) : (
           <>
             {/* Top Hero KPI Metrics */}
