@@ -1,6 +1,7 @@
 // src/components/ZoeFeatures/WhiteCavesBook/masterLibraryData.ts
 import { MasterCorpusRoot } from './treeTypes';
 import { CHAPTER_OF_PROTOCOLS } from './chapterOfProtocols';
+import { CHAPTER_CORE_FOUNDATIONS } from './chapterCoreFoundations';
 import { CHAPTER_DEPARTMENT_SOPS } from './chapterDepartmentSOPs';
 import { CHAPTER_STRATEGIC_PLANS } from './chapterStrategicPlans';
 import { CHAPTER_BUSINESS_STRATEGIES } from './chapterBusinessStrategies';
@@ -47,6 +48,7 @@ export const AEGIS_12_LEVEL_CORPUS: MasterCorpusRoot = {
                   description: 'Statutory constitutional rules governing all agents and subagents.',
                   chapters: [
                     CHAPTER_OF_PROTOCOLS,
+                    CHAPTER_CORE_FOUNDATIONS,
                     {
                       level: 5,
                       nodeId: 'CH05-001',
@@ -111,7 +113,7 @@ export const AEGIS_12_LEVEL_CORPUS: MasterCorpusRoot = {
                                                   nodeId: 'L12-001',
                                                   lineNumber: 1,
                                                   text: 'const TOKEN_HARD_LIMIT = 15000;',
-                                                  tokenType: 'OPERATOR'
+                                                  tokenType: 'OPERATOR',
                                                 },
                                               ],
                                             },
@@ -128,7 +130,7 @@ export const AEGIS_12_LEVEL_CORPUS: MasterCorpusRoot = {
                                                   nodeId: 'L12-005',
                                                   lineNumber: 5,
                                                   text: 'await Promise.all([runCommand(), readFile(), editFile()]);',
-                                                  tokenType: 'KEYWORD'
+                                                  tokenType: 'KEYWORD',
                                                 },
                                               ],
                                             },
@@ -187,14 +189,16 @@ export const AEGIS_12_LEVEL_CORPUS: MasterCorpusRoot = {
               nodeId: 'VL03-004',
               volumeNumber: 4,
               title: 'Volume IV: Business Strategy & Legal Invariants',
-              description: 'Dubai Land Department regulations, credit preservation, and security models.',
+              description:
+                'Dubai Land Department regulations, credit preservation, and security models.',
               cantos: [
                 {
                   level: 4,
                   nodeId: 'CN04-004',
                   cantoNumber: 1,
                   title: 'Canto 1: Real Estate Strategy & Constitutional Laws',
-                  description: 'Enterprise business strategy, engine continuity, and role matrices.',
+                  description:
+                    'Enterprise business strategy, engine continuity, and role matrices.',
                   chapters: [CHAPTER_BUSINESS_STRATEGIES],
                 },
               ],
@@ -204,7 +208,8 @@ export const AEGIS_12_LEVEL_CORPUS: MasterCorpusRoot = {
               nodeId: 'VL03-005',
               volumeNumber: 5,
               title: 'Volume V: Autonomous Evolution, Phases & Wave Sprints',
-              description: 'Historical engineering phases, wave sprints, and continuous memory compaction.',
+              description:
+                'Historical engineering phases, wave sprints, and continuous memory compaction.',
               cantos: [
                 {
                   level: 4,
@@ -215,7 +220,7 @@ export const AEGIS_12_LEVEL_CORPUS: MasterCorpusRoot = {
                   chapters: [
                     CHAPTER_PHASE_HISTORY,
                     CHAPTER_WAVE_SPRINTS,
-                    CHAPTER_SESSION_TRANSCRIPTS
+                    CHAPTER_SESSION_TRANSCRIPTS,
                   ],
                 },
               ],
