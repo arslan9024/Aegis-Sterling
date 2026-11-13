@@ -40,6 +40,15 @@ const squads: SquadCardProps[] = [
     icon: <Globe className="w-5 h-5 text-sky-400" />,
   },
   {
+    name: 'Web Showcase Squad',
+    lead: '@Victoria & @Una',
+    role: 'Next.js 16 SSR & Dubai Ultra-Prime Public Engine',
+    agentsCount: 8,
+    status: 'active',
+    repo: 'White-Caves-Web',
+    icon: <Layers className="w-5 h-5 text-rose-400" />,
+  },
+  {
     name: 'Server Squad',
     lead: '@Mira',
     role: 'Express API, Prisma ORM & UAE Tax Invariants',
