@@ -1,98 +1,153 @@
 /**
  * @file aegis-perpetual-ouroboros.ts
- * @description AEGIS Perpetual Ouroboros Orchestration Engine (TypeScript ESM).
- * Autonomous lifecycle, root hygiene, multi-agent dispatch under TURING-LAW-000 (<350 lines).
+ * @description AEGIS Bounded Orchestration Loop (TypeScript ESM).
+ * Enforces safe bounded cycle execution, exclusive lockfiles, root collision safety,
+ * and disabled git writes per policy.mergePolicy.directPushToMainForbidden.
  */
 
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
-import { performance } from 'perf_hooks';
-import { fileURLToPath } from 'url';
+import { execSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..', '..');
-
-const AGENTS_DIR = path.join(ROOT, '.agents');
-const PLANS_DIR = path.join(AGENTS_DIR, 'plans');
-const DOCS_DIR = path.join(AGENTS_DIR, 'docs');
 const LOGS_DIR = path.join(ROOT, 'engines', 'orchestrator', 'logs');
+const LOCK_PATH = path.join(LOGS_DIR, 'ouroboros.lock');
 const LIVE_LOG = path.join(LOGS_DIR, 'ouroboros-live.log');
 
-export interface ShellExecResult {
-  ok: boolean;
-  out: string;
-  err: string;
+export interface OuroborosOptions {
+  maxCycles?: number;
+  git?: boolean;
+  vitest?: boolean;
 }
 
-export function runShellCommand(cmd: string, timeoutMs = 120000): ShellExecResult {
-  try {
-    const res = execSync(cmd, {
-      cwd: ROOT,
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-      timeout: timeoutMs,
-    });
-    return { ok: true, out: (res || '').trim(), err: '' };
-  } catch (err: unknown) {
-    const error = err as { stdout?: Buffer | string; stderr?: Buffer | string; message?: string };
-    const out = (error.stdout ? error.stdout.toString() : '').trim();
-    const e = (error.stderr ? error.stderr.toString() : error.message || '').trim();
-    return { ok: false, out, err: e };
+export interface ParsedOuroborosOptions {
+  maxCycles: number;
+  vitest: boolean;
+}
+
+function validatePositiveFiniteCount(raw: number): number {
+  if (typeof raw !== 'number' || !Number.isFinite(raw) || !Number.isSafeInteger(raw) || raw <= 0) {
+    throw new Error('Cycle count must be a positive finite integer.');
   }
+  return raw;
 }
 
-export function enforceRootHygiene(): void {
+export function parseOptions(argv: string[]): ParsedOuroborosOptions {
+  let seenOnce = false;
+  let seenCycles = false;
+  let maxCycles = 1;
+  let vitest = true;
+
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === '--once') {
+      seenOnce = true;
+      maxCycles = 1;
+    } else if (arg === '--cycles') {
+      seenCycles = true;
+      const val = argv[++i];
+      if (!val || !/^\d+$/.test(val)) {
+        throw new Error('Cycle count must be a positive finite integer.');
+      }
+      maxCycles = validatePositiveFiniteCount(Number(val));
+    } else if (arg === '--skip-test') {
+      vitest = false;
+    } else if (arg === '--skip-git') {
+      // Git writes are always disabled by safety invariant.
+    } else {
+      throw new Error(`Unknown option: ${arg}`);
+    }
+
+    if (seenOnce && seenCycles) {
+      throw new Error('Specify only one of --once or --cycles.');
+    }
+  }
+
+  return { maxCycles, vitest };
+}
+
+export function enforceRootHygiene(rootDir: string = process.cwd()): void {
   const forbiddenRootFolders = ['docs', 'plans', 'strategies', 'business_docs'];
   for (const folder of forbiddenRootFolders) {
-    const targetPath = path.join(ROOT, folder);
+    const targetPath = path.join(rootDir, folder);
     if (fs.existsSync(targetPath)) {
-      const dest = path.join(AGENTS_DIR, folder);
-      try {
-        if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
-        fs.cpSync(targetPath, dest, { recursive: true });
-        fs.rmSync(targetPath, { recursive: true, force: true });
-        console.log(`[OuroborosRootHygiene] Safely moved rogue root /${folder} -> .agents/${folder}`);
-      } catch (e) {
-        console.warn(`[OuroborosRootHygiene] Non-fatal migration warning for /${folder}:`, e);
-      }
+      throw new Error(
+        `Root collision detected (${folder}/) — manual review required. No files moved or deleted.`
+      );
     }
   }
 }
 
-export interface OuroborosCycleReport {
-  timestamp: string;
-  cycleDurationMs: number;
-  phasesExecuted: string[];
-  gitStatus: string;
-  hygieneStatus: 'CLEAN' | 'WARNING';
+export async function runPerpetualLoop(options: OuroborosOptions = {}): Promise<void> {
+  if (options.git === true) {
+    throw new Error('Git writes are disabled in bounded automation mode.');
+  }
+
+  const maxCycles = options.maxCycles !== undefined ? validatePositiveFiniteCount(options.maxCycles) : 1;
+  const runVitest = options.vitest !== false;
+
+  fs.mkdirSync(LOGS_DIR, { recursive: true });
+  const fd = fs.openSync(LOCK_PATH, 'wx');
+  fs.writeFileSync(LOCK_PATH, `${process.pid}\n`, 'utf8');
+
+  try {
+    enforceRootHygiene(process.cwd());
+
+    for (let cycle = 1; cycle <= maxCycles; cycle++) {
+      fs.writeFileSync(
+        LIVE_LOG,
+        `[${new Date().toISOString()}] Cycle ${cycle}/${maxCycles} STARTED\n`,
+        'utf8'
+      );
+
+      try {
+        execSync('node engines/orchestrator/check-12-way-and-file-limits.ts', {
+          cwd: ROOT,
+          stdio: 'pipe',
+        });
+
+        if (runVitest) {
+          execSync('npx vitest run src/__tests__/aegisProtocols.test.ts', {
+            cwd: process.cwd(),
+            stdio: 'pipe',
+          });
+        } else {
+          fs.appendFileSync(LIVE_LOG, `[${new Date().toISOString()}] TESTS SKIPPED\n`);
+        }
+
+        fs.appendFileSync(
+          LIVE_LOG,
+          `[${new Date().toISOString()}] Cycle ${cycle}/${maxCycles} PASSED\n`
+        );
+      } catch (err) {
+        fs.appendFileSync(
+          LIVE_LOG,
+          `[${new Date().toISOString()}] Cycle ${cycle}/${maxCycles} FAILED: ${(err as Error).message}\n`
+        );
+        throw err;
+      }
+
+      if (cycle < maxCycles) {
+        await new Promise(resolve => setTimeout(resolve, 250));
+      }
+    }
+  } finally {
+    fs.closeSync(fd);
+    fs.unlinkSync(LOCK_PATH);
+  }
 }
 
-export function executeOuroborosCycle(): OuroborosCycleReport {
-  const t0 = performance.now();
-  console.log('[Ouroboros] Executing Phase 1-4 Root Cleanliness & Git Health check...');
-
-  enforceRootHygiene();
-
-  const gitRes = runShellCommand('git status --short');
-  const duration = Math.round(performance.now() - t0);
-
-  const report: OuroborosCycleReport = {
-    timestamp: new Date().toISOString(),
-    cycleDurationMs: duration,
-    phasesExecuted: ['Phase 1: Codebase Audit', 'Phase 4: Sovereign Root Cleanliness', 'Phase 6: Git Check'],
-    gitStatus: gitRes.ok ? (gitRes.out || 'CLEAN') : 'ERROR',
-    hygieneStatus: 'CLEAN',
-  };
-
-  if (!fs.existsSync(LOGS_DIR)) fs.mkdirSync(LOGS_DIR, { recursive: true });
-  fs.appendFileSync(LIVE_LOG, `[${report.timestamp}] Ouroboros Cycle Completed in ${duration}ms\n`, 'utf8');
-
-  return report;
+export function executeOuroborosCycle(): Promise<void> {
+  return runPerpetualLoop({ maxCycles: 1, vitest: false });
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const report = executeOuroborosCycle();
-  console.log('[Ouroboros] Cycle Report:', JSON.stringify(report, null, 2));
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const opts = parseOptions(process.argv.slice(2));
+  runPerpetualLoop(opts).catch(err => {
+    console.error('❌ Ouroboros Failure:', (err as Error).message);
+    process.exit(1);
+  });
 }

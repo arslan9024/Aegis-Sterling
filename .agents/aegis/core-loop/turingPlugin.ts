@@ -1,7 +1,7 @@
 // turingPlugin.ts
 // Defines the contract for plugins that can extend the Turing Orchestrator.
 
-import { TuringAuditRule } from './turingTypes';
+import { TuringAuditRule } from './turingTypes.ts';
 
 export interface OrchestratorPlugin {
   /** Optional initialization hook – called when the plugin is registered. */

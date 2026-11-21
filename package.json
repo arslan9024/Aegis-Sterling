@@ -1,7 +1,8 @@
 {
   "name": "aegis-sterling-sovereign",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "private": true,
+  "type": "module",
   "description": "Master Sovereign AI Orchestration Mesh, Living Chronicler & Corporate Hub",
   "scripts": {
     "ports:check": "npx tsx ../secrets/ports.ts --check aegis",
@@ -9,8 +10,17 @@
     "dev:watch": "npm --prefix ui run dev:watch",
     "build": "npm --prefix ui run build",
     "preview": "npm --prefix ui run preview",
-    "aegis:health": "node engines/orchestrator/aegis-engine.js health",
-    "aegis:mesh": "node engines/orchestrator/aegis-engine.js squads",
+    "typecheck": "node ui/node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+    "aegis:health": "node engines/orchestrator/aegis-engine.ts health",
+    "aegis:mesh": "node engines/orchestrator/aegis-engine.ts squads",
+    "aegis:scan": "node engines/orchestrator/aegis-engine.ts scan",
+    "aegis:dedup": "node engines/orchestrator/aegis-engine.ts dedup",
+    "aegis:gates": "node engines/orchestrator/verification-gates.ts",
+    "aegis:limits": "node engines/orchestrator/check-12-way-and-file-limits.ts",
+    "aegis:cycle": "node engines/orchestrator/aegis-cycle.ts --skip-git --skip-build",
+    "aegis:ouroboros:once": "node engines/orchestrator/aegis-perpetual-ouroboros.ts --once",
+    "aegis:task": "node engines/orchestrator/aegis-task.ts",
+    "aegis:plugin:sync": "node engines/scripts/sync-plugin.ts",
     "aegis:book:sync": "powershell -Command \"Copy-Item -Path knowledge/book-white-caves/* -Destination ui/public/book-white-caves/ -Recurse -Force\""
   },
   "keywords": [

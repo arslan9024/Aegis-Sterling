@@ -1,0 +1,16 @@
+{
+  "aegis-sovereign-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command|write_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/aegis-guard.ts",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

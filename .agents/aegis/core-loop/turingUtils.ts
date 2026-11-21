@@ -1,8 +1,8 @@
 // turingUtils.ts – helper functions used by the orchestrator core
 
-import { PromptEvaluationContext, CreditVelocityPlan } from './turingTypes';
-import { SUPREME_CREDIT_VELOCITY_CONFIG } from './turingConstants';
-import { CONTEXT_SET } from './turingConstants';
+import { PromptEvaluationContext, CreditVelocityPlan } from './turingTypes.ts';
+import { SUPREME_CREDIT_VELOCITY_CONFIG } from './turingConstants.ts';
+import { CONTEXT_SET } from './turingConstants.ts';
 
 /** Evaluate credit and speed budget for a prompt */
 export function evaluateCreditAndSpeedBudget(context: PromptEvaluationContext): CreditVelocityPlan {

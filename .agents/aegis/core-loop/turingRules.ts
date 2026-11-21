@@ -1,6 +1,6 @@
 // turingRules.ts
-import { TuringAuditRule } from './turingTypes';
-import { CONTEXT_SET } from './turingConstants';
+import { TuringAuditRule } from './turingTypes.ts';
+import { CONTEXT_SET } from './turingConstants.ts';
 
 /** Returns the default set of audit rules for the Turing Orchestrator. */
 export function getDefaultRules(): TuringAuditRule[] {
@@ -68,7 +68,8 @@ export function getDefaultRules(): TuringAuditRule[] {
     {
       id: 'TURING-RULE-003',
       name: 'Bhakti 1-12-108 Hierarchy Anchor',
-      description: 'Enforce 1 MD Sovereign Hub, 12 Core Corporate Departments, and 108 Supervisors',
+      description:
+        'Enforce repeating fractal: 1 MD -> 12 Directors -> 108 Managers -> 1,296 Assistant Managers (12/Mgr) -> 11,664 Supervisors (9/AM), stopping at Supervisors for manual Teams & Employees CRUD',
       check: ctx => {
         const text = ctx.promptText.toLowerCase();
         if (

@@ -19,10 +19,18 @@ export const SUPREME_CREDIT_VELOCITY_CONFIG = {
 } as const;
 
 /**
- * Canonical 5 V5.0 CSV Protocol Matrices.
+ * Canonical 5 V5.1 CSV Protocol Matrices.
  * @see AEG-001 – AEG-042
  */
 export const AEGIS_PROTOCOL_FILES = [
+  '.agents/aegis/protocols/PROMETHEUS_CORE_UNBOUND.csv',
+  '.agents/aegis/protocols/TURING_SILENT_VELOCITY.csv',
+  '.agents/aegis/protocols/PHOENIX_SHIELD_ISOLATION.csv',
+  '.agents/aegis/protocols/VALKYRIE_LEDGER_RISE.csv',
+  '.agents/aegis/protocols/APOCALYPSE_OVERDRIVE_MATRIX.csv',
+] as const;
+
+export const AEGIS_PROTOCOL_TS_MODULES = [
   '.agents/aegis/protocols/turingProtocol.ts',
   '.agents/aegis/protocols/maryAllenWilkesProtocol.ts',
   '.agents/aegis/protocols/aegisMasterProtocols.ts',

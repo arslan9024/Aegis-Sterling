@@ -9,7 +9,7 @@
  * resilient, Turing-compliant 12-Layer Co-Location Protocol.
  */
 
-import { validateTuringExecutionCriteria } from './turingProtocol';
+import { validateTuringExecutionCriteria } from './turingProtocol.ts';
 
 export type WilkesCategoryKey =
   | 'view'

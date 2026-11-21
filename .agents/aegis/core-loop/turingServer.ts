@@ -3,8 +3,8 @@
 // No external dependencies – uses Node's built‑in http module.
 
 import http from 'http';
-import { getMetrics } from './turingMetrics';
-import { logger } from './turingLogger';
+import { getMetrics } from './turingMetrics.ts';
+import { logger } from './turingLogger.ts';
 
 const PORT = process.env.TURING_ORCHESTRATOR_PORT ?? '3000';
 

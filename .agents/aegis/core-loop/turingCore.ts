@@ -4,25 +4,25 @@
  */
 import * as path from 'path';
 import { writeFileSync } from 'fs';
-import { logger } from './turingLogger';
-import { planProcessed, ruleViolation, creditUsage } from './turingMetrics';
-import { TuringQueue } from './turingQueue';
-import { retry } from './turingRetry';
-import { isOpen, recordFailure, resetFailures } from './turingCircuitBreaker';
+import { logger } from './turingLogger.ts';
+import { planProcessed, ruleViolation, creditUsage } from './turingMetrics.ts';
+import { TuringQueue } from './turingQueue.ts';
+import { retry } from './turingRetry.ts';
+import { isOpen, recordFailure, resetFailures } from './turingCircuitBreaker.ts';
 import {
   CodebaseDebtCheckResult,
   PromptEvaluationContext,
   TuringAuditRule,
   IdempotentSubmissionEnvelope,
   CreditVelocityPlan,
-} from './turingTypes';
+} from './turingTypes.ts';
 import {
   SUPREME_CREDIT_VELOCITY_CONFIG,
   AEGIS_PROTOCOL_FILES,
   ALLOWED_CONTEXT_TRIAD,
-} from './turingConstants';
-import { getDefaultRules } from './turingRules';
-import { pluginRegistry } from './turingPlugin';
+} from './turingConstants.ts';
+import { getDefaultRules } from './turingRules.ts';
+import { pluginRegistry } from './turingPlugin.ts';
 
 export {
   CodebaseDebtCheckResult,
@@ -78,7 +78,7 @@ export class TuringOrchestratorCore {
     }
 
     try {
-      const { readPlans } = await import('./readPlans');
+      const { readPlans } = await import('./readPlans.ts');
       const rawPlans = await retry(() => readPlans(), 2, 50);
 
       // Support both Record<string, string> and Array<{ id: string; content: string }> (for tests)
@@ -136,7 +136,7 @@ export class TuringOrchestratorCore {
    */
   public async logPlans(): Promise<void> {
     try {
-      const { readPlans } = await import('./readPlans');
+      const { readPlans } = await import('./readPlans.ts');
       const plans = await readPlans();
       const planNames = Object.keys(plans);
       if (planNames.length === 0) {
@@ -241,7 +241,9 @@ export class TuringOrchestratorCore {
   public evaluatePromptContext(context: PromptEvaluationContext): CodebaseDebtCheckResult {
     const violations: string[] = [];
     const recommendations: string[] = [];
-    const pluginRules = pluginRegistry.flatMap(p => (p.getRules ? p.getRules() : []));
+    const pluginRules = pluginRegistry.flatMap((p: { getRules?: () => TuringAuditRule[] }) =>
+      p.getRules ? p.getRules() : []
+    );
     const allRules = [...this.rules, ...pluginRules];
 
     for (const rule of allRules) {

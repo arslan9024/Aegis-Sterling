@@ -1,0 +1,12 @@
+{
+  "name": "aegis-sterling",
+  "displayName": "Aegis Sterling V5.1",
+  "version": "5.1.0",
+  "description": "White Caves Sovereign Engineering Orchestrator: enforces TURING-LAW-000, AEG-001..AEG-042 invariants, UAE DLD/Ejari/VAT compliance, and deterministic PowerShell/dev-server PreToolUse guards across all White Caves repos.",
+  "author": "Arslan Malik — White Caves Real Estate LLC",
+  "suggestedPrompts": [
+    "Run an AEGIS health, file-limit, and security verification gate audit across White Caves",
+    "Execute /aegis-task to implement and verify a feature under TURING-LAW-000",
+    "Generate a standardized session handover prompt for the next chat"
+  ]
+}

@@ -2,7 +2,7 @@
 
 import path from 'path';
 import { writeFileSync } from 'fs';
-import { readPlans } from './readPlans';
+import { readPlans } from './readPlans.ts';
 
 /** Process all markdown plan files */
 export async function processPlans(): Promise<void> {

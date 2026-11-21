@@ -5,8 +5,8 @@
 import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
-import { PlanReadError } from './turingErrors';
-import { logger } from './turingLogger';
+import { PlanReadError } from './turingErrors.ts';
+import { logger } from './turingLogger.ts';
 
 const HASH_FILE = path.join(process.cwd(), '.agents', 'aegis', 'core-loop', '.planHashes.json');
 

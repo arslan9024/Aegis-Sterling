@@ -4,7 +4,7 @@
  * @see AEG-040
  */
 
-import { getCurrentRequestId } from './turingRequestContext';
+import { getCurrentRequestId } from './turingRequestContext.ts';
 
 export interface StructuredLogEntry {
   level: 'debug' | 'info' | 'warn' | 'error';

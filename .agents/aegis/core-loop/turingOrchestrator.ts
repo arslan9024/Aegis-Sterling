@@ -13,7 +13,7 @@ import {
   SUPREME_CREDIT_VELOCITY_CONFIG,
   AEGIS_PROTOCOL_FILES,
   ALLOWED_CONTEXT_TRIAD,
-} from './turingCore';
+} from './turingCore.ts';
 
 export {
   TuringOrchestratorCore as TuringOrchestrator,

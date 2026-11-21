@@ -29,6 +29,12 @@ projects:
         team_agents: ["@Iris", "@Invoice", "@Rachel_QA"]
         rules: projects/white-caves-mobile/squads/rules/
         skills: projects/white-caves-mobile/squads/skills/
+      web:
+        name: White-Caves-Web
+        github: https://github.com/arslan9024/White-Caves-Web
+        port: 3001
+        team_lead: "@Victoria & @Una"
+        team_agents: ["@Victoria", "@Una", "@Elena"]
     orchestration_lead: "@Ada"
     business_lead: "@Zoe"
     plans: projects/white-caves-frontend/knowledge/plans/
