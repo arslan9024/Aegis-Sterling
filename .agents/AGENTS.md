@@ -51,6 +51,12 @@
       - Master workforce system: `/dashboard/aiams` (1-12-108 organogram & CRUD).
     - **Automated Linda-to-Mary Acquisition Pipeline:** Sourced properties from WhatsApp owner campaigns in Linda must directly offer one-click handoff to Mary's master inventory (`LindaLeadContextPane` &rarr; `MaryInventoryCRM`), preserving title deed, owner contact, and cluster mapping.
     - **Zero-Loop Route Normalization:** `resolveSidebarItemRoute` in `ModernDashboardPage.logic.ts` must maintain O(1) direct returns for top-level AI agent routes to eliminate cascading re-renders and UI flicker.
+17. **Strict Atomic Reusability & Zero Duplicate Code Law (`TURING-REUSABLE-ATOMIC-017`):**
+    - Any component, hook, utility function, or domain logic reused or referenced in $\ge 2$ places MUST be extracted into a shared atomic library (`src/components/shared/`, `src/utils/`, or `packages/`).
+    - Zero duplicate implementations allowed. Any PR or agent commit containing duplicate logic will be rejected at the AEGIS static gate.
+18. **Strict SPA Nested Sub-Routing Law (`TURING-SPA-SUBROUTING-018`):**
+    - All sub-navigation under `/dashboard` (including department floors, director dashboards, CRM entities, and AI dossiers) MUST strictly execute as client-side nested sub-routes using React Router `<Outlet />` and `<Link />` / `useNavigate()`.
+    - Zero full-page browser refreshes or destructive state unmounts permitted under `/dashboard/*`, ensuring sub-second view switches and preserving global context states.
 
 ---
 

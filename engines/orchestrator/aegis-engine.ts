@@ -10,6 +10,7 @@ import { AEGIS_ROOT, AGENTS_ROOT, loadPolicy } from './policy-loader.ts';
 import { AEGIS_42_PROTOCOLS, type AegisProtocolRule } from '../../.agents/aegis/protocols/aegisMasterProtocols.ts';
 import { runScan } from './aegis-autopilot-scanner.ts';
 import { computeFixedOrgMatrix } from '../../protocols/bhakti/index.ts';
+import './aegis-file-ops.ts';
 
 const WORKSPACE_ROOT = path.resolve(AEGIS_ROOT, '..');
 
