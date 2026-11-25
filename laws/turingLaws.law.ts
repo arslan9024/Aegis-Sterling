@@ -25,8 +25,15 @@ export const EXTENDED_TURING_LAWS: Record<string, TuringLawDefinition> = {
   'TURING-CENTRAL-SECRETS-018': {
     lawId: 'TURING-CENTRAL-SECRETS-018',
     name: 'Centralized Monorepo Secrets Vault Mandate',
-    category: 'SECURITY',
+    category: 'COMPLIANCE',
     statement: 'All .env files, API keys, service account JSONs, and credentials MUST live exclusively in the centralized monorepo secrets/ directory (e.g. secrets/google/gmail.tab.env, secrets/google/google.tab.env) — never scattered inside individual app repos.',
     enforcementMechanism: 'Services resolve credentials from ../secrets/ with env fallback and zero hardcoded keys.',
+  },
+  'TURING-SUPERVISOR-CHAIN-019': {
+    lawId: 'TURING-SUPERVISOR-CHAIN-019',
+    name: 'Top-to-Bottom AI Supervisor Accountability & DMS/TMS Hierarchy Labeling Law',
+    category: 'GOVERNANCE',
+    statement: 'Every requested feature, update, or task group MUST be updated top-to-bottom from AI Zoe (COO) -> Department Director (DEPT-XX / DIR-XX) -> Division Manager (DIV-XX-Y / MGR-XX-Y) -> Assistant Manager (UNIT-XX-Y-ZZ / AMGR-XX-Y-ZZ) -> one specific AI Supervisor actor (SQD-XX-Y-ZZ-W / SUP-XX-Y-ZZ-W), updating Zoe team DMS positions and TMS labeled task collections in lockstep.',
+    enforcementMechanism: 'rules/supervisorChain.rule.ts deterministic Bhakti coordinate derivation & DMS/TMS validation.',
   },
 };

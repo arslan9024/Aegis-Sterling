@@ -6,3 +6,4 @@ export * from "./contextTriad.rule.ts";
 export * from "./uaeCompliance.rule.ts";
 export * from "./dmsErmsTms.rule.ts";
 export * from "./shellHygiene.rule.ts";
+export * from "./supervisorChain.rule.ts";
