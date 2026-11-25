@@ -22,4 +22,11 @@ export const EXTENDED_TURING_LAWS: Record<string, TuringLawDefinition> = {
     statement: '1 MD -> 12 Directors -> 108 Managers -> 1,296 Asst Managers (12/Mgr) -> 11,664 Supervisors (9/AM = 108/Mgr), then Manual CRUD for Teams & Employees.',
     enforcementMechanism: 'protocols/bhakti/ bidirectional capacity & rollup math.',
   },
+  'TURING-CENTRAL-SECRETS-018': {
+    lawId: 'TURING-CENTRAL-SECRETS-018',
+    name: 'Centralized Monorepo Secrets Vault Mandate',
+    category: 'SECURITY',
+    statement: 'All .env files, API keys, service account JSONs, and credentials MUST live exclusively in the centralized monorepo secrets/ directory (e.g. secrets/google/gmail.tab.env, secrets/google/google.tab.env) — never scattered inside individual app repos.',
+    enforcementMechanism: 'Services resolve credentials from ../secrets/ with env fallback and zero hardcoded keys.',
+  },
 };
