@@ -13,6 +13,8 @@
  *   Level 5+ (Team Leaders & Employees): Manual CRUD based on live HR & Performance Leaderboard.
  */
 
+import { getNamedSeatOverrideForManager } from './aiAssistantSupervisorHierarchy.formula.js';
+
 export const BHAKTI_LOCKED_DEPARTMENTS_12 = [
   { slot: 1, deptCode: 'DEPT-01', dirCode: 'DIR-01', id: 'customer_experience', name: 'Customer Experience, Concierge & Hospitality' },
   { slot: 2, deptCode: 'DEPT-02', dirCode: 'DIR-02', id: 'marketing_branding', name: 'Marketing, Branding & Digital Acquisition' },
@@ -60,7 +62,7 @@ export interface GeneratedSupervisorSeat {
   divisionCode: string; // DIV-{DD}-{M}
   slot: number; // 1..9
   name: string;
-  gender: 'Female';
+  gender: 'Female' | 'Male';
   reportsToId: string; // AMGR-{DD}-{M}-{AA}
   deptCode: string;
   managerCode: string;
@@ -101,6 +103,8 @@ export function generateManagerFractalSubtree(
   const divisionCode = `DIV-${dd}-${managerSlot}`;
   const managerCode = `MGR-${dd}-${managerSlot}`;
 
+  const namedChain = getNamedSeatOverrideForManager(deptSlot, managerSlot);
+
   return FEMALE_AM_NAMES_12.map((amFirstName, amIdx) => {
     const amSlot = amIdx + 1;
     const aa = String(amSlot).padStart(2, '0');
@@ -109,28 +113,34 @@ export function generateManagerFractalSubtree(
 
     const supervisors: GeneratedSupervisorSeat[] = FEMALE_SUP_NAMES_9.map((supFirstName, supIdx) => {
       const supSlot = supIdx + 1;
+      const isNamedOperationalSupervisor = Boolean(namedChain && amSlot === 1 && supSlot === 1);
       return {
         id: `SUP-${dd}-${managerSlot}-${aa}-${supSlot}`,
         squadCode: `SQD-${dd}-${managerSlot}-${aa}-${supSlot}`,
         unitCode,
         divisionCode,
         slot: supSlot,
-        name: `AI ${supFirstName} Sup-${dd}.${managerSlot}.${amSlot}.${supSlot}`,
-        gender: 'Female',
+        name: isNamedOperationalSupervisor
+          ? namedChain!.supervisor.name
+          : `AI ${supFirstName} Sup-${dd}.${managerSlot}.${amSlot}.${supSlot}`,
+        gender: isNamedOperationalSupervisor ? namedChain!.supervisor.gender : 'Female',
         reportsToId: amId,
         deptCode,
         managerCode,
       };
     });
 
+    const isNamedAssistantManager = Boolean(namedChain && amSlot === 1);
     return {
       id: amId,
       unitCode,
       divisionCode,
       slot: amSlot,
-      name: divisionLabel
-        ? `AI ${amFirstName} (${divisionLabel})`
-        : `AI ${amFirstName} AM-${dd}.${managerSlot}.${aa}`,
+      name: isNamedAssistantManager
+        ? namedChain!.assistantManager.name
+        : divisionLabel
+          ? `AI ${amFirstName} (${divisionLabel})`
+          : `AI ${amFirstName} AM-${dd}.${managerSlot}.${aa}`,
       gender: 'Female',
       reportsToId: managerCode,
       deptCode,
