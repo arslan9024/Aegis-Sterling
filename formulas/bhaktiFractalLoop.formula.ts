@@ -13,7 +13,7 @@
  *   Level 5+ (Team Leaders & Employees): Manual CRUD based on live HR & Performance Leaderboard.
  */
 
-import { getNamedSeatOverrideForManager } from './aiAssistantSupervisorHierarchy.formula.js';
+import { getNamedSeatOverrideForManager } from './aiAssistantSupervisorHierarchy.formula.ts';
 
 export const BHAKTI_LOCKED_DEPARTMENTS_12 = [
   { slot: 1, deptCode: 'DEPT-01', dirCode: 'DIR-01', id: 'customer_experience', name: 'Customer Experience, Concierge & Hospitality' },
