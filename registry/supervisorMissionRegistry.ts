@@ -62,11 +62,11 @@ export const SOVEREIGN_MISSION_SUPERVISOR_CHAINS: readonly SovereignMissionSuper
   {
     missionId: 'MISSION-2026-11-TRACK-B',
     track: 'TRACK_B',
-    missionTitle: 'Wave 2 & Wave 3 Atomic Decomposition of Oversized Frontend Files (AEG-042 < 350 Lines)',
+    missionTitle: 'Wave 2–4 Cross-Ecosystem Atomic Decomposition (Web Zero-Debt + Server Core Routes/Services AEG-042 < 350 Lines)',
     reposInScope: ['Aegis-Sterling', 'White-Caves-Server', 'White-Caves-Frontend', 'White-Caves-Web'],
     authorityChain: TRACK_B_FRONTEND_DECOMPOSITION_CHAIN,
     dmsPositionCode: 'OPEN-DEPT12-SUP-ARCH-01',
-    tmsTaskCodes: ['TSK-ARCH-W2', 'TMS-ARCH-W2', 'TSK-ARCH-W3', 'TMS-ARCH-W3'],
+    tmsTaskCodes: ['TSK-ARCH-W2', 'TMS-ARCH-W2', 'TSK-ARCH-W3', 'TMS-ARCH-W3', 'TSK-ARCH-W4', 'TMS-ARCH-W4'],
     registeredAt: '2026-11-25T16:30:00Z',
   },
 ] as const;
