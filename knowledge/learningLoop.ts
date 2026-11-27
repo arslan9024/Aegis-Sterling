@@ -59,3 +59,41 @@ export function recordLearningEntry(
 export function getEnforcedPatterns(logPath: string = LEARNING_LOG_PATH): string[] {
   return loadLearningLog(logPath).entries.map(e => e.pattern);
 }
+
+export interface PromotedRule {
+  ruleId: string;
+  pattern: string;
+  occurrences: number;
+  promotedAt: string;
+}
+
+export function promoteRecurringPatterns(
+  minOccurrences = 2,
+  logPath: string = LEARNING_LOG_PATH
+): PromotedRule[] {
+  const log = loadLearningLog(logPath);
+  const counts = new Map<string, { count: number; ruleId: string }>();
+
+  for (const entry of log.entries) {
+    const key = entry.enforcedRuleId ?? entry.category;
+    const prev = counts.get(key);
+    if (prev) {
+      prev.count += 1;
+    } else {
+      counts.set(key, { count: 1, ruleId: key });
+    }
+  }
+
+  const promoted: PromotedRule[] = [];
+  for (const [pattern, info] of counts.entries()) {
+    if (info.count >= minOccurrences) {
+      promoted.push({
+        ruleId: info.ruleId,
+        pattern,
+        occurrences: info.count,
+        promotedAt: new Date().toISOString(),
+      });
+    }
+  }
+  return promoted;
+}

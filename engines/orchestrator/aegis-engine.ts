@@ -14,6 +14,7 @@ import { getAegisTeamSummary } from '../../registry/aegisTeamRoster.ts';
 import { loadLearningLog } from '../../knowledge/learningLoop.ts';
 import { runDispatch } from './aegis-dispatch.ts';
 import { runSkillsAudit } from './aegis-skills-audit.ts';
+import { runAstAudit } from './aegis-ast-analyzer.ts';
 import './aegis-file-ops.ts';
 
 const WORKSPACE_ROOT = path.resolve(AEGIS_ROOT, '..');
@@ -226,6 +227,9 @@ async function main() {
       break;
     case 'skills:audit':
       runSkillsAudit({ json: hasJson });
+      break;
+    case 'ast:audit':
+      runAstAudit({ json: hasJson });
       break;
     case 'cycle':
     default:

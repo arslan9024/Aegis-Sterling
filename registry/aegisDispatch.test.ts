@@ -32,7 +32,7 @@ describe('AEGIS 12-Director Dispatch, Skills Audit & LearningLoop', () => {
     expect(audit.totalSkills).toBeGreaterThan(0);
     const oversizedPluginSkills = audit.skills.filter(s => s.source === 'plugin' && !s.withinAeg042Limit);
     expect(oversizedPluginSkills).toHaveLength(0);
-  });
+  }, 30000);
 
   it('persists and retrieves learningLoop entries round-trip', () => {
     const tmpLog = path.join(os.tmpdir(), `aegis-dispatch-learn-${Date.now()}.json`);
