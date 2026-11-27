@@ -1,11 +1,11 @@
 # AEGIS Real Codebase Scan Report
-> Generated: 2026-11-27T01:49:12.267Z | Repos: White-Caves-Frontend, White-Caves-Server, White-Caves-Web, Aegis-Sterling | Files Scanned: 8995 | Findings: 1312
+> Generated: 2026-11-27T08:37:44.735Z | Repos: White-Caves-Frontend, White-Caves-Server, White-Caves-Web, Aegis-Sterling | Files Scanned: 9004 | Findings: 1304
 
 ## Summary by Rule
-- **PHOENIX-TS-STRICT**: 1042
+- **PHOENIX-TS-STRICT**: 1064
 - **WC-UI-ALERT**: 20
-- **AEG-042**: 211
-- **AEGIS-TS-MIGRATION**: 39
+- **AEG-042**: 193
+- **AEGIS-TS-MIGRATION**: 27
 
 ## Top 30 Concrete Findings
 | ID | Repo | Rule | Severity | File | Detail |

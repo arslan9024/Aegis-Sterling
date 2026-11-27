@@ -9,6 +9,7 @@ import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve } from 'node:path';
 import { AEGIS_ROOT, createTraceContext, isFeatureEnabled, loadPolicy, type AegisPolicy } from './policy-loader.ts';
+import { recordLearningEntry } from '../../knowledge/learningLoop.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -187,8 +188,17 @@ export function runDiffRiskScore(policy: AegisPolicy, targetRoot: string = resol
   const scale = policy.verification?.diffRiskWeights?.linesChangedScale ?? 500;
   const highRiskWeight = policy.verification?.diffRiskWeights?.highRiskPathWeight ?? 10;
 
-  let riskScore = Math.min(100, Math.round((totalLines / scale) * 50));
+  const isSafeFile = (f: string) =>
+    /\.(test|spec)\.[jt]sx?$|__tests__|__mocks__/.test(f) ||
+    (/\.(md|json)$/.test(f) && !f.endsWith('policy.json') && !f.endsWith('package.json'));
+
+  const safeFiles = changedFiles.filter(isSafeFile);
   const highRiskHits = changedFiles.filter(f => HIGH_RISK_PATHS.some(p => f.includes(p)));
+  const nonSafeRatio = changedFiles.length > 0
+    ? Math.max(0.25, (changedFiles.length - safeFiles.length) / changedFiles.length)
+    : 1;
+
+  let riskScore = Math.min(100, Math.round(((totalLines * nonSafeRatio) / scale) * 50));
   riskScore = Math.min(100, riskScore + highRiskHits.length * highRiskWeight);
 
   const minGroupRisk = policy.workflowGraph?.stepPatterns?.['group-review']?.minRiskScore ?? 70;
@@ -200,9 +210,10 @@ export function runDiffRiskScore(policy: AegisPolicy, targetRoot: string = resol
     threshold,
     totalLinesChanged: totalLines,
     changedFiles: changedFiles.length,
+    safeFilesCount: safeFiles.length,
     highRiskFilesHit: highRiskHits,
     requiresGroupReview: riskScore >= minGroupRisk,
-    summary: `Diff-risk score: ${riskScore}/${threshold} (${totalLines} lines, ${highRiskHits.length} high-risk paths)`,
+    summary: `Diff-risk score: ${riskScore}/${threshold} (${totalLines} lines, ${highRiskHits.length} high-risk paths, ${safeFiles.length} safe test/doc files)`,
   };
 }
 
@@ -288,6 +299,13 @@ export function tryAutoFix(errorLine: string, { dryRun = false }: { dryRun?: boo
     }
     try {
       execSync(entry.autoFix, { stdio: 'inherit', cwd: AEGIS_ROOT });
+      recordLearningEntry({
+        id: `autofix-${entry.code}`,
+        category: 'bug-pattern',
+        pattern: entry.label,
+        resolution: `Auto-fixed via: ${entry.autoFix}`,
+        enforcedRuleId: entry.code,
+      });
       return { matched: true, code: entry.code, action: entry.autoFix, executed: true };
     } catch {
       return { matched: true, code: entry.code, action: entry.autoFix, executed: false };

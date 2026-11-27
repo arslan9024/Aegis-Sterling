@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { AEGIS_ROOT, AGENTS_ROOT } from './policy-loader.ts';
+import { loadLearningLog, recordLearningEntry } from '../../knowledge/learningLoop.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -164,6 +165,29 @@ export function runScan(targetDirs?: string[]): RealScanSummary {
     ...topFindings.map(f => `| ${f.id} | ${f.repo} | ${f.rule} | ${f.severity} | \`${f.file}\` | ${f.detail} |`),
   ].join('\n');
   fs.writeFileSync(OUT_MD, md, 'utf8');
+
+  // Closed-loop learning: persist active scan rules and mark previously seen rules as resolved when count reaches 0
+  const log = loadLearningLog();
+  for (const [rule, count] of Object.entries(countsByRule)) {
+    recordLearningEntry({
+      id: `scan-rule-${rule}`,
+      category: 'scan-finding',
+      pattern: rule,
+      resolution: `Active across ${count} finding(s); enforce ${rule} in pre-commit & CI.`,
+      enforcedRuleId: rule,
+    });
+  }
+  for (const entry of log.entries) {
+    if (entry.category === 'scan-finding' && entry.enforcedRuleId && !(entry.enforcedRuleId in countsByRule)) {
+      recordLearningEntry({
+        id: entry.id,
+        category: 'scan-finding',
+        pattern: entry.pattern,
+        resolution: `RESOLVED (0 findings in latest scan). Enforced permanently.`,
+        enforcedRuleId: entry.enforcedRuleId,
+      });
+    }
+  }
 
   return summary;
 }
