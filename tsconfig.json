@@ -23,5 +23,6 @@
     "engines/orchestrator/*.ts",
     "engines/scripts/sync-plugin.ts",
     "core/siddhanta/*.ts"
-  ]
+  ],
+  "exclude": ["**/*.test.ts"]
 }

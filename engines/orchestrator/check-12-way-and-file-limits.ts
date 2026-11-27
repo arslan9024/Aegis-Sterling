@@ -51,6 +51,7 @@ function resolveTargetRoot(argv: string[]): string {
 }
 
 function getLinesCount(filePath: string): number {
+  if (!fs.existsSync(filePath)) return 0;
   const content = fs.readFileSync(filePath, 'utf8');
   if (!content) return 0;
   return content.split('\n').length - (content.endsWith('\n') ? 1 : 0);
@@ -155,17 +156,52 @@ export function auditTwelveWayInventory(targetRoot: string = process.cwd()): Twe
 export const auditTwelveWayArchitecture = auditTwelveWayInventory;
 export const auditSevenCategoryInventory = auditTwelveWayInventory;
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const target = resolveTargetRoot(process.argv.slice(2));
-  const result = auditFileLimits(target);
-  auditTwelveWayInventory(target);
-  const atomicMatrixDir = path.join(target, 'src', 'aegis-protocols', 'canonical-108-divisions-matrix');
-  if (fs.existsSync(atomicMatrixDir)) {
-    const atomic = auditAtomicBarrelFolder(atomicMatrixDir);
-    console.log(
-      `\n🧬 [Atomic Folder & Barrel Protocol] canonical-108-divisions-matrix: ${atomic.totalFoldersAudited} folders, ${atomic.totalFilesAudited} files (max=${atomic.maxLinesObserved} lines <= 150 leaf target, valid=${atomic.valid})`
-    );
-    if (!atomic.valid) process.exitCode = 1;
+const MONOREPO_SUBREPOS = [
+  'White-Caves-Frontend',
+  'White-Caves-Server',
+  'White-Caves-Web',
+  'White-Caves-Mobile',
+  'Aegis-Sterling',
+];
+
+export function resolveTargets(argv: string[]): string[] {
+  const idx = argv.indexOf('--target');
+  if (idx !== -1 && argv[idx + 1]) {
+    return [path.resolve(argv[idx + 1])];
   }
-  if (result.oversizedCount > 0) process.exitCode = 1;
+  const cwd = process.cwd();
+  const directSubRepos = MONOREPO_SUBREPOS.map(r => path.join(cwd, r)).filter(p => fs.existsSync(p));
+  if (directSubRepos.length > 0) {
+    return directSubRepos;
+  }
+  const parentDir = path.resolve(cwd, '..');
+  const parentSubRepos = MONOREPO_SUBREPOS.map(r => path.join(parentDir, r)).filter(p => fs.existsSync(p));
+  if (parentSubRepos.length > 0) {
+    return parentSubRepos;
+  }
+  return [cwd];
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const targets = resolveTargets(process.argv.slice(2));
+  let totalFiles = 0;
+  let totalOversized = 0;
+
+  for (const target of targets) {
+    const result = auditFileLimits(target);
+    totalFiles += result.total;
+    totalOversized += result.oversizedCount;
+    auditTwelveWayInventory(target);
+    const atomicMatrixDir = path.join(target, 'src', 'aegis-protocols', 'canonical-108-divisions-matrix');
+    if (fs.existsSync(atomicMatrixDir)) {
+      const atomic = auditAtomicBarrelFolder(atomicMatrixDir);
+      console.log(
+        `\n🧬 [Atomic Folder & Barrel Protocol] canonical-108-divisions-matrix: ${atomic.totalFoldersAudited} folders, ${atomic.totalFilesAudited} files (max=${atomic.maxLinesObserved} lines <= 150 leaf target, valid=${atomic.valid})`
+      );
+      if (!atomic.valid) process.exitCode = 1;
+    }
+  }
+
+  console.log(`\n📊 [AEGIS Limits Aggregate] Repos: ${targets.length} | Total Files: ${totalFiles} | Oversized (>350 lines): ${totalOversized}`);
+  if (totalOversized > 0) process.exitCode = 1;
 }

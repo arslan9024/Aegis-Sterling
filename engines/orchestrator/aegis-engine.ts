@@ -10,6 +10,8 @@ import { AEGIS_ROOT, AGENTS_ROOT, loadPolicy } from './policy-loader.ts';
 import { AEGIS_42_PROTOCOLS, type AegisProtocolRule } from '../../.agents/aegis/protocols/aegisMasterProtocols.ts';
 import { runScan } from './aegis-autopilot-scanner.ts';
 import { computeFixedOrgMatrix } from '../../protocols/bhakti/index.ts';
+import { getAegisTeamSummary } from '../../registry/aegisTeamRoster.ts';
+import { loadLearningLog } from '../../knowledge/learningLoop.ts';
 import './aegis-file-ops.ts';
 
 const WORKSPACE_ROOT = path.resolve(AEGIS_ROOT, '..');
@@ -143,6 +145,12 @@ export function runSquads() {
   console.log(
     `🔱 [Bhakti 1-12-108 Repeating Fractal] 1 MD | ${cap.DIRECTOR} Dir | ${cap.MANAGER} Mgr | ${cap.ASSISTANT_MANAGER} AM | ${cap.SUPERVISOR} Sup (Stop Boundary -> Manual CRUD Teams/Employees)`
   );
+  const aegisTeam = getAegisTeamSummary();
+  const learningLog = loadLearningLog();
+  console.log(
+    `🛡️ [AEGIS Engineering Team] ${aegisTeam.directorsCount} Directors -> ${aegisTeam.subagentsCount} Subagents (${aegisTeam.totalAegisTeam} total, 100% male CS greats)`
+  );
+  console.log(`🧠 [AEGIS Learning Loop] ${learningLog.entries.length} persisted pattern(s) active`);
   console.log(`📐 [Protocol Coverage] ${protocolRules.length}/42 Typed Rules Enforced`);
   console.log(`🌐 [Total Verified Mesh] ${totalActiveMesh} Agents\n`);
 
@@ -150,6 +158,7 @@ export function runSquads() {
     executiveCouncilCount: execFiles.length,
     engineeringDepartments: engDepts.length,
     engineeringNodesTotal: totalEngNodes,
+    aegisTeam,
     zoeManagersCount,
     zoeSupervisorsCount,
     protocolRulesCount: protocolRules.length,
