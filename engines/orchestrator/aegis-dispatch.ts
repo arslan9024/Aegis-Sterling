@@ -69,6 +69,7 @@ export interface DirectorDispatchSummary {
   directorId: string;
   directorName: string;
   domain: string;
+  modelTier?: string;
   totalCount: number;
   subagents: SubagentAssignment[];
 }
@@ -97,12 +98,13 @@ export function runDispatch(options: DispatchOptions = {}): DispatchResult {
 
   const scan = runScan(targets);
   const rrCursor = new Map<string, number>();
-  const dirMap = new Map<
+    const dirMap = new Map<
     string,
     {
       directorId: string;
       directorName: string;
       domain: string;
+      modelTier: string;
       totalCount: number;
       subMap: Map<string, { subagentId: string; subagentName: string; count: number; rules: Set<string> }>;
     }
@@ -126,6 +128,7 @@ export function runDispatch(options: DispatchOptions = {}): DispatchResult {
         directorId: director.id,
         directorName: director.name,
         domain: director.domain,
+        modelTier: director.modelTier ?? 'inherit',
         totalCount: 0,
         subMap: new Map(),
       };
@@ -168,6 +171,7 @@ export function runDispatch(options: DispatchOptions = {}): DispatchResult {
     directorId: d.directorId,
     directorName: d.directorName,
     domain: d.domain,
+    modelTier: d.modelTier,
     totalCount: d.totalCount,
     subagents: [...d.subMap.values()].map(s => ({
       subagentId: s.subagentId,

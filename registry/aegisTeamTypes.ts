@@ -4,6 +4,7 @@
  */
 
 export type AegisToolPermission = 'read_file' | 'edit_file' | 'write_file' | 'run_command' | 'search_web';
+export type AegisModelTier = 'pro' | 'flash' | 'flash_lite' | 'inherit';
 
 export interface AegisDirectorSpec {
   id: string;
@@ -12,6 +13,7 @@ export interface AegisDirectorSpec {
   domain: string;
   name: string;
   title: string;
+  modelTier?: AegisModelTier;
   skills: string[];
   tools: AegisToolPermission[];
   scope: string;
