@@ -1,0 +1,40 @@
+name: AEGIS Sovereign Gates
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  aegis-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: AEGIS Health & Governance Audit
+        run: npm run aegis:health
+
+      - name: AEGIS Verification Gates (Security, Diff-Risk, Flaky-Tests)
+        run: npm run aegis:gates
+
+      - name: AEG-042 File Line Ceiling (< 350 lines)
+        run: npm run aegis:limits
+
+      - name: Block New @ts-nocheck Directives
+        run: |
+          if git diff origin/${{ github.base_ref || 'main' }}...HEAD -- '*.ts' '*.tsx' | grep -E '^\+.*@ts-nocheck'; then
+            echo "ERROR: New @ts-nocheck directive detected."
+            exit 1
+          fi
+
+      - name: Gitleaks Secret Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
