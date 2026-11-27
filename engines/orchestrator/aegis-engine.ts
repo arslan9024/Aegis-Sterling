@@ -10,8 +10,10 @@ import { AEGIS_ROOT, AGENTS_ROOT, loadPolicy } from './policy-loader.ts';
 import { AEGIS_42_PROTOCOLS, type AegisProtocolRule } from '../../.agents/aegis/protocols/aegisMasterProtocols.ts';
 import { runScan } from './aegis-autopilot-scanner.ts';
 import { computeFixedOrgMatrix } from '../../protocols/bhakti/index.ts';
-import { getAegisTeamSummary, AEGIS_DIRECTORS, getSubagentsForDirector } from '../../registry/aegisTeamRoster.ts';
+import { getAegisTeamSummary } from '../../registry/aegisTeamRoster.ts';
 import { loadLearningLog } from '../../knowledge/learningLoop.ts';
+import { runDispatch } from './aegis-dispatch.ts';
+import { runSkillsAudit } from './aegis-skills-audit.ts';
 import './aegis-file-ops.ts';
 
 const WORKSPACE_ROOT = path.resolve(AEGIS_ROOT, '..');
@@ -192,42 +194,14 @@ export function runBenchmark() {
   return { loadLatencyMs: Number(elapsedMs.toFixed(2)), rulesCount: rules.length, totalMesh: squadStats.totalActiveMesh, lastScanFindings };
 }
 
-const RULE_TO_DIRECTOR_ID: Record<string, string> = {
-  'TURING-ROOT-007': 'dir-turing',
-  'AEG-042': 'dir-turing',
-  'PHOENIX-TS-STRICT': 'dir-hejlsberg',
-  'AEGIS-TS-MIGRATION': 'dir-hejlsberg',
-  'WC-UI-ALERT': 'dir-kay',
-};
-
-export function runDispatch(targets?: string[]) {
-  console.log('🎯 [AEGIS Dispatch] Mapping scan findings to 12 AEGIS Directors & 108 Subagents...');
-  const scan = runScan(targets);
-  const byDirector = new Map<string, { directorName: string; subagent: string; count: number; rules: Set<string> }>();
-
-  for (const finding of scan.findings) {
-    const dirId = RULE_TO_DIRECTOR_ID[finding.rule] ?? 'dir-turing';
-    const director = AEGIS_DIRECTORS.find(d => d.id === dirId) ?? AEGIS_DIRECTORS[0];
-    const subs = getSubagentsForDirector(director.id);
-    const sub = subs[0]?.name ?? 'Unassigned';
-    const existing = byDirector.get(director.id);
-    if (existing) {
-      existing.count += 1;
-      existing.rules.add(finding.rule);
-    } else {
-      byDirector.set(director.id, { directorName: director.name, subagent: sub, count: 1, rules: new Set([finding.rule]) });
-    }
-  }
-
-  for (const [, entry] of byDirector) {
-    console.log(`   • ${entry.directorName} -> ${entry.subagent}: ${entry.count} finding(s) [${[...entry.rules].join(', ')}]`);
-  }
-  console.log(`✅ Dispatched ${scan.totalFindings} finding(s) across ${byDirector.size} Director(s).\n`);
-  return { totalFindings: scan.totalFindings, directorsDispatched: byDirector.size };
-}
+export { runDispatch } from './aegis-dispatch.ts';
+export { runSkillsAudit } from './aegis-skills-audit.ts';
 
 async function main() {
-  const command = (process.argv[2] || 'cycle').toLowerCase();
+  const args = process.argv.slice(2);
+  const command = (args[0] || 'cycle').toLowerCase();
+  const hasJson = args.includes('--json');
+  const hasAutoRemediate = args.includes('--auto-remediate');
   switch (command) {
     case 'health':
       runHealth();
@@ -248,7 +222,10 @@ async function main() {
       runBenchmark();
       break;
     case 'dispatch':
-      runDispatch();
+      runDispatch({ json: hasJson, autoRemediate: hasAutoRemediate });
+      break;
+    case 'skills:audit':
+      runSkillsAudit({ json: hasJson });
       break;
     case 'cycle':
     default:

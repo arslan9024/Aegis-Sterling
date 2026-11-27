@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "updatedAt": "2026-11-27T08:37:45.333Z",
+  "updatedAt": "2026-11-27T14:22:44.993Z",
   "entries": [
     {
       "id": "scan-rule-PHOENIX-TS-STRICT",
@@ -8,15 +8,15 @@
       "pattern": "PHOENIX-TS-STRICT",
       "resolution": "Active across 1064 finding(s); enforce PHOENIX-TS-STRICT in pre-commit & CI.",
       "enforcedRuleId": "PHOENIX-TS-STRICT",
-      "recordedAt": "2026-11-27T08:37:45.114Z"
+      "recordedAt": "2026-11-27T14:22:44.912Z"
     },
     {
       "id": "scan-rule-WC-UI-ALERT",
       "category": "scan-finding",
       "pattern": "WC-UI-ALERT",
-      "resolution": "Active across 20 finding(s); enforce WC-UI-ALERT in pre-commit & CI.",
+      "resolution": "Active across 19 finding(s); enforce WC-UI-ALERT in pre-commit & CI.",
       "enforcedRuleId": "WC-UI-ALERT",
-      "recordedAt": "2026-11-27T08:37:45.199Z"
+      "recordedAt": "2026-11-27T14:22:44.938Z"
     },
     {
       "id": "scan-rule-AEG-042",
@@ -24,7 +24,7 @@
       "pattern": "AEG-042",
       "resolution": "Active across 193 finding(s); enforce AEG-042 in pre-commit & CI.",
       "enforcedRuleId": "AEG-042",
-      "recordedAt": "2026-11-27T08:37:45.272Z"
+      "recordedAt": "2026-11-27T14:22:44.964Z"
     },
     {
       "id": "scan-rule-AEGIS-TS-MIGRATION",
@@ -32,7 +32,7 @@
       "pattern": "AEGIS-TS-MIGRATION",
       "resolution": "Active across 27 finding(s); enforce AEGIS-TS-MIGRATION in pre-commit & CI.",
       "enforcedRuleId": "AEGIS-TS-MIGRATION",
-      "recordedAt": "2026-11-27T08:37:45.333Z"
+      "recordedAt": "2026-11-27T14:22:44.993Z"
     }
   ]
 }

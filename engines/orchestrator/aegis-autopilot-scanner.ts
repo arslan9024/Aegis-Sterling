@@ -199,3 +199,79 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   console.log(`🔍 [AEGIS Real Scan] Scanned ${result.totalFilesScanned} files across ${result.reposScanned.join(', ')} -> ${result.totalFindings} concrete findings.`);
   Object.entries(result.countsByRule).forEach(([rule, count]) => console.log(`   - ${rule}: ${count}`));
 }
+
+export async function runScanAsync(targetDirs?: string[], concurrency = 16): Promise<RealScanSummary> {
+  const repos = (targetDirs && targetDirs.length > 0)
+    ? targetDirs.map(d => ({ name: path.basename(path.resolve(d)), dir: path.resolve(d) }))
+    : DEFAULT_REPOS.map(name => ({ name, dir: path.join(WORKSPACE_ROOT, name) })).filter(r => fs.existsSync(r.dir));
+
+  const findings: RealScanFinding[] = [];
+  let totalFilesScanned = 0;
+  let seq = 1;
+
+  for (const repo of repos) {
+    for (const forbidden of FORBIDDEN_ROOT_DIRS) {
+      if (fs.existsSync(path.join(repo.dir, forbidden))) {
+        findings.push({
+          id: `SCAN-${String(seq++).padStart(4, '0')}`,
+          repo: repo.name,
+          rule: 'TURING-ROOT-007',
+          severity: 'HIGH',
+          file: `${forbidden}/`,
+          detail: `Forbidden loose root folder '${forbidden}/' present in ${repo.name}.`,
+        });
+      }
+    }
+
+    const scanRoots = ['src', 'server', 'app', 'engines']
+      .map(sub => path.join(repo.dir, sub))
+      .filter(p => fs.existsSync(p));
+    const files = scanRoots.flatMap(sr => walkRepoFiles(sr));
+    totalFilesScanned += files.length;
+
+    for (let i = 0; i < files.length; i += concurrency) {
+      const batch = files.slice(i, i + concurrency);
+      const contents = await Promise.all(batch.map(f => fs.promises.readFile(f, 'utf8').catch(() => '')));
+      batch.forEach((file, idx) => {
+        const rel = path.relative(repo.dir, file).replace(/\\/g, '/');
+        const isTest = /\.(test|spec)\.|__tests__|__mocks__/.test(rel);
+        const content = contents[idx];
+        const lineCount = content ? content.split('\n').length : 0;
+        if (!isTest && lineCount > 350) {
+          findings.push({
+            id: `SCAN-${String(seq++).padStart(4, '0')}`,
+            repo: repo.name,
+            rule: 'AEG-042',
+            severity: lineCount > 700 ? 'HIGH' : 'MEDIUM',
+            file: rel,
+            detail: `${lineCount} lines exceeds 350-line Single Purpose File ceiling.`,
+          });
+        }
+        if (!isTest && /@ts-ignore|@ts-nocheck/.test(content)) {
+          findings.push({
+            id: `SCAN-${String(seq++).padStart(4, '0')}`,
+            repo: repo.name,
+            rule: 'PHOENIX-TS-STRICT',
+            severity: 'MEDIUM',
+            file: rel,
+            detail: 'Contains @ts-ignore or @ts-nocheck suppression.',
+          });
+        }
+      });
+    }
+  }
+
+  const countsByRule = findings.reduce<Record<string, number>>((acc, f) => {
+    acc[f.rule] = (acc[f.rule] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  return {
+    generatedAt: new Date().toISOString(),
+    reposScanned: repos.map(r => r.name),
+    totalFilesScanned,
+    totalFindings: findings.length,
+    countsByRule,
+    findings,
+  };
+}
